@@ -1,103 +1,150 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import DashboardLayout from '@/components/DashboardLayout';
+
+export default function HomePage() {
+  const [displayedText, setDisplayedText] = useState('');
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+
+  const codeLines = [
+    '> Initializing future_tech.py',
+    '> Loading quantum algorithms',
+    '> Connecting to server..',
+    '> System ready! Welcome to Coding Club',
+    '> >>> import innovation',
+    '> >>> innovation.transform_future'
+  ];
+
+  // Typewriter effect
+  useEffect(() => {
+    if (currentLineIndex < codeLines.length) {
+      const currentLine = codeLines[currentLineIndex];
+      
+      if (currentCharIndex < currentLine.length) {
+        const timer = setTimeout(() => {
+          setDisplayedText(prev => prev + currentLine[currentCharIndex]);
+          setCurrentCharIndex(prev => prev + 1);
+        }, 50);
+        
+        return () => clearTimeout(timer);
+      } else {
+        // Move to next line
+        const timer = setTimeout(() => {
+          setDisplayedText(prev => prev + '\n');
+          setCurrentLineIndex(prev => prev + 1);
+          setCurrentCharIndex(0);
+        }, 300);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [currentCharIndex, currentLineIndex, codeLines]);
+
+  const stats = [
+    { number: '40+', label: 'Active Members' },
+    { number: '3+', label: 'Projects & Courses' },
+    { number: '5+', label: 'Workshops Held' }
+  ];
+
+  const techTags = [
+    'Machine Learning',
+    'Web Development', 
+    'AI Research'
+  ];
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <DashboardLayout>
+      <div className="h-full relative">
+        <div className="relative z-10 h-full flex items-center justify-center p-8">
+        <div className="max-w-7xl w-full grid lg:grid-cols-2 gap-12 items-center">
+          
+          {/* Left Content */}
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                <span className="text-green-400">Innovate</span>{' '}
+                <span className="text-white">with</span>{' '}
+                <span className="text-cyan-400">Code</span>
+              </h1>
+              
+              <p className="text-lg text-gray-300 leading-relaxed max-w-lg">
+                Join the coding revolution at IISER Thiruvananthapuram. We build solutions that{' '}
+                <span className="text-cyan-400 font-semibold underline decoration-cyan-400/50">transform</span>{' '}
+                the world through AI, machine learning, and cutting-edge tech.
+              </p>
+            </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {/* Tech Tags */}
+            <div className="flex flex-wrap gap-3">
+              {techTags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-4 py-2 bg-blue-600/20 border border-blue-500/30 rounded-full text-blue-300 text-sm font-medium backdrop-blur-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button className="group bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 flex items-center justify-center space-x-2">
+                <span>🚀</span>
+                <span>Join Our Community</span>
+              </button>
+              
+              <button className="group bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600/50 hover:border-slate-500/50 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm flex items-center justify-center space-x-2">
+                <span>{'</>'}</span>
+                <span>Explore Tech</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Right Content - Terminal */}
+          <div className="relative">
+            <div className="bg-slate-900/80 backdrop-blur-lg border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
+              {/* Terminal Header */}
+              <div className="flex items-center space-x-2 pb-4 border-b border-slate-700/50">
+                <div className="flex space-x-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
+                <div className="text-slate-400 text-sm ml-4">codingclub@iisertvm:~</div>
+              </div>
+              
+              {/* Terminal Content */}
+              <div className="mt-4 font-mono text-sm h-48 overflow-hidden">
+                <pre className="text-green-400 whitespace-pre-wrap leading-relaxed">
+                  {displayedText}
+                  <span className="animate-pulse">_</span>
+                </pre>
+              </div>
+            </div>
+          </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Stats Section */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-4xl px-8">
+          <div className="bg-slate-900/40 backdrop-blur-lg border border-slate-700/50 rounded-2xl p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              {stats.map((stat) => (
+                <div key={stat.label} className="space-y-2">
+                  <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-cyan-400">
+                    {stat.number}
+                  </div>
+                  <div className="text-gray-400 text-sm font-medium">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 }
