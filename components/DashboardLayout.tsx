@@ -2,7 +2,7 @@
 
 import { ReactNode, useState, useEffect } from 'react';
 import { Home, Search, Users, FolderOpen, Users2, BookOpen, Archive } from 'lucide-react';
-import { useRouter, useParams, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface Props {
   children: ReactNode;
@@ -10,34 +10,36 @@ interface Props {
 
 export default function DashboardLayout({ children }: Props) {
   const router = useRouter();
-  const { id: studentId } = useParams();
   const pathname = usePathname();
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [activeButton, setActiveButton] = useState('');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Extract current page from pathname and set default
+  // Extract current page from pathname and set active button
   useEffect(() => {
     if (pathname) {
-      const pathParts = pathname.split('/');
-      const currentPage = pathParts[pathParts.length - 1];
-      setActiveButton(currentPage);
-    } else {
-      // Set overview as default active page
-      setActiveButton('overview');
+      // Map pathname to button IDs
+      if (pathname.includes('/blogs')) {
+        setActiveButton('blogs');
+      } else if (pathname.includes('/alumni')) {
+        setActiveButton('alumni');
+      } else if (pathname.includes('/projects')) {
+        setActiveButton('projects');
+      } else if (pathname.includes('/team')) {
+        setActiveButton('team');
+      } else if (pathname.includes('/resources')) {
+        setActiveButton('resources');
+      } else if (pathname === '/' || pathname.includes('/overview') || pathname.includes('/home')) {
+        setActiveButton('overview');
+      } else {
+        setActiveButton('overview'); // Default fallback
+      }
     }
   }, [pathname]);
 
-  // Set overview as default on component mount
-  useEffect(() => {
-    if (!activeButton) {
-      setActiveButton('overview');
-    }
-  }, []);
-
-  const goTo = async (path: string) => {
-    if (!studentId || isTransitioning) return;
+  const goTo = async (path: string, itemId: string) => {
+    if (isTransitioning) return;
     
     // Close search if expanded and navigating to another page
     if (searchExpanded) {
@@ -45,14 +47,26 @@ export default function DashboardLayout({ children }: Props) {
     }
     
     setIsTransitioning(true);
+    setActiveButton(itemId); // Immediately update active button for visual feedback
     
-    // Small delay for smooth transition effect
+    try {
+      // Use window.location for direct navigation to ensure it works
+      if (itemId === 'blogs') {
+        window.location.href = '/blogs';
+      } else {
+        // For other pages, use router.push
+        router.push(path);
+      }
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // Fallback to window.location
+      window.location.href = path;
+    }
+    
+    // Reset transition state after a delay
     setTimeout(() => {
-      router.push(`/dashboard/${studentId}/${path}`);
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 150);
-    }, 100);
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const toggleSearch = () => {
@@ -70,27 +84,26 @@ export default function DashboardLayout({ children }: Props) {
 
   const closeSearch = () => {
     setSearchExpanded(false);
-    setActiveButton('');
     setSearchQuery('');
   };
 
   const navItems = [
-    { id: 'overview', icon: Home, label: 'Home' },
-    { id: 'alumni', icon: Users, label: 'Alumni' },
-    { id: 'projects', icon: FolderOpen, label: 'Projects and Resources' },
-    { id: 'team', icon: Users2, label: 'Team' },
-    { id: 'blogs', icon: BookOpen, label: 'Blogs' },
-    { id: 'resources', icon: Archive, label: 'Resources' },
+    { id: 'overview', icon: Home, label: 'Home', path: '/' },
+    { id: 'alumni', icon: Users, label: 'Alumni', path: '/alumni' },
+    { id: 'projects', icon: FolderOpen, label: 'Projects', path: '/projects' },
+    { id: 'team', icon: Users2, label: 'Team', path: '/team' },
+    { id: 'blogs', icon: BookOpen, label: 'Blogs', path: '/blogs' },
+    { id: 'resources', icon: Archive, label: 'Resources', path: '/resources' },
   ];
 
   return (
     <div className="h-screen flex flex-col overflow-hidden relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url("/back.png")' }}>
       {/* Background overlay for better contrast */}
-      <div className="absolute inset-0 bg-blue-900/80 backdrop-blur-sm -z-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/70 to-black/80 backdrop-blur-sm -z-10"></div>
       
       {/* Animated background elements */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" />
-      <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-tl from-purple-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" />
+      <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-tl from-blue-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '2s' }} />
       <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '4s' }} />
 
       {/* Top Navbar */}
@@ -141,7 +154,7 @@ export default function DashboardLayout({ children }: Props) {
                         relative text-white px-4 py-2 rounded-full transition-all duration-300 ease-out
                         transform hover:scale-110 hover:-translate-y-0.5
                         ${isActive 
-                          ? 'bg-black/40 shadow-lg shadow-black/25 border border-white/30' 
+                          ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border border-purple-400/50 backdrop-blur-sm' 
                           : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
                         }
                         ${isTransitioning ? 'pointer-events-none' : ''}
@@ -150,27 +163,27 @@ export default function DashboardLayout({ children }: Props) {
                       style={{
                         animationDelay: `${index * 50}ms`,
                       }}
-                      onClick={() => goTo(item.id)}
+                      onClick={() => goTo(item.path, item.id)}
                     >
                       <Icon 
                         size={18} 
                         className={`
                           transition-all duration-300 ease-out
-                          ${isActive ? 'text-white drop-shadow-sm' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
+                          ${isActive ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
                         `}
                       />
                       
                       {/* Label text beside icon */}
                       <span className={`
                         text-xs font-medium transition-all duration-300 ease-out
-                        ${isActive ? 'text-white drop-shadow-sm' : 'text-gray-300 group-hover:text-white'}
+                        ${isActive ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
                       `}>
                         {item.label}
                       </span>
 
-                      {/* Active state indicator */}
+                      {/* Active state indicator - enhanced */}
                       {isActive && (
-                        <div className="absolute inset-0 bg-black/20 rounded-full animate-pulse" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
                       )}
                     </button>
                   );
@@ -187,7 +200,7 @@ export default function DashboardLayout({ children }: Props) {
                 bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
                 text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
                 ${searchExpanded 
-                  ? 'bg-black/40 shadow-lg shadow-black/25 border-white/30' 
+                  ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
                   : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
                 }
                 group flex items-center space-x-2 relative
@@ -197,19 +210,19 @@ export default function DashboardLayout({ children }: Props) {
                 size={18} 
                 className={`
                   transition-all duration-300 ease-out
-                  ${searchExpanded ? 'text-white drop-shadow-sm' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
+                  ${searchExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
                 `}
               />
               <span className={`
                 text-xs font-medium transition-all duration-300 ease-out
-                ${searchExpanded ? 'text-white drop-shadow-sm' : 'text-gray-300 group-hover:text-white'}
+                ${searchExpanded ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
               `}>
                 Search
               </span>
               
               {/* Active state indicator for search */}
               {searchExpanded && (
-                <div className="absolute inset-0 bg-black/20 rounded-full animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
               )}
             </button>
           </div>
@@ -227,12 +240,12 @@ export default function DashboardLayout({ children }: Props) {
           `}
         >
           {/* Animated background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-purple-50/30 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-50/20 via-transparent to-blue-50/20 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
           
           {/* Loading overlay during transitions */}
           {isTransitioning && (
-            <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-3xl">
-              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-10 flex items-center justify-center rounded-3xl">
+              <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
             </div>
           )}
           
