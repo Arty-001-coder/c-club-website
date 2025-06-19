@@ -14,6 +14,18 @@ export default function BlogPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+
+  // Page load animation - trigger after data is loaded
+  useEffect(() => {
+    if (!loading) {
+      // Small delay to ensure smooth transition from loading state
+      const timer = setTimeout(() => {
+        setIsPageLoaded(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   const categories = [
     { id: 'all', label: 'All Posts' },
@@ -345,9 +357,13 @@ export default function BlogPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-full">
+      <div className={`min-h-full transition-all duration-1000 ${
+        isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}>
         {/* Hero Section - Shows selected post content */}
-        <div className="relative overflow-hidden h-[950px] rounded-b-3xl">
+        <div className={`relative overflow-hidden h-[900px] rounded-b-3xl transition-all duration-1000 delay-200 ${
+          isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
           <div className="absolute inset-0 bg-black/55 backdrop-blur-lg border border-white/10" />
           
           {/* Hero Content */}
@@ -405,7 +421,9 @@ export default function BlogPage() {
         </div>
 
         {/* Blog Section */}
-        <div className="max-w-7xl mx-auto px-8 py-12">
+        <div className={`max-w-7xl mx-auto px-8 py-12 transition-all duration-1000 delay-400 ${
+          isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
           {/* Read Full Article Button */}
           {selectedPost && (
             <div className="flex justify-center mb-8">
@@ -420,8 +438,10 @@ export default function BlogPage() {
           )}
 
           {/* Category Filter */}
-          <div className="flex flex-wrap gap-4 justify-center mb-12">
-            {categories.map((category) => (
+          <div className={`flex flex-wrap gap-4 justify-center mb-12 transition-all duration-1000 delay-500 ${
+            isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
+            {categories.map((category, index) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
@@ -429,7 +449,14 @@ export default function BlogPage() {
                   selectedCategory === category.id
                     ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg shadow-purple-500/25'
                     : 'bg-black/20 backdrop-blur-lg border border-white/20 text-white hover:bg-white/10 hover:border-purple-300'
+                } ${
+                  isPageLoaded 
+                    ? 'opacity-100 translate-x-0' 
+                    : 'opacity-0 -translate-x-4'
                 }`}
+                style={{
+                  transitionDelay: `${600 + (index * 50)}ms`
+                }}
               >
                 {category.label}
               </button>
@@ -437,7 +464,9 @@ export default function BlogPage() {
           </div>
 
           {/* Blog Posts Header */}
-          <div className="text-center mb-12">
+          <div className={`text-center mb-12 transition-all duration-1000 delay-700 ${
+            isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
             <h2 className="text-4xl font-bold text-white mb-4">OUR BLOG POSTS</h2>
             <p className="text-gray-300 text-lg">
               {blogPosts.length === 0 
@@ -449,11 +478,20 @@ export default function BlogPage() {
 
           {/* Blog Posts Grid */}
           {blogPosts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-              {blogPosts.map((post) => (
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 transition-all duration-1000 delay-800 ${
+              isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}>
+              {blogPosts.map((post, index) => (
                 <article
                   key={post.id}
-                  className="group bg-black/20 backdrop-blur-lg border border-white/20 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 cursor-pointer"
+                  className={`group bg-black/20 backdrop-blur-lg border border-white/20 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 cursor-pointer ${
+                    isPageLoaded 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-0 translate-y-8'
+                  }`}
+                  style={{
+                    transitionDelay: `${900 + (index * 100)}ms`
+                  }}
                   onClick={() => setSelectedPost(post)}
                 >
                   <div className="relative overflow-hidden h-[500px]">
@@ -489,7 +527,14 @@ export default function BlogPage() {
               {/* Add Post Button */}
               <div 
                 onClick={handleAddNewPost}
-                className="group bg-black/10 backdrop-blur-lg border border-white/20 border-dashed rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 cursor-pointer flex items-center justify-center h-[500px]"
+                className={`group bg-black/10 backdrop-blur-lg border border-white/20 border-dashed rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 cursor-pointer flex items-center justify-center h-[500px] ${
+                  isPageLoaded 
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 translate-y-8'
+                }`}
+                style={{
+                  transitionDelay: `${900 + (blogPosts.length * 100)}ms`
+                }}
               >
                 <div className="text-center">
                   <div className="w-16 h-16 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -502,7 +547,9 @@ export default function BlogPage() {
               </div>
             </div>
           ) : (
-            <div className="text-center py-12">
+            <div className={`text-center py-12 transition-all duration-1000 delay-800 ${
+              isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}>
               <p className="text-gray-400 text-lg">No blog posts found.</p>
             </div>
             )}

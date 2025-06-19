@@ -14,11 +14,23 @@ export default function ProjectsCoursesPage() {
   const [courses, setCourses] = useState<CourseWithImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
     loadData();
   }, []);
+
+  // Page load animation - trigger after data is loaded
+  useEffect(() => {
+    if (!loading) {
+      // Small delay to ensure smooth transition from loading state
+      const timer = setTimeout(() => {
+        setIsPageLoaded(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   const loadData = async () => {
     try {
@@ -90,9 +102,13 @@ export default function ProjectsCoursesPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-full">
+      <div className={`min-h-full transition-all duration-1000 ${
+        isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}>
         {/* Header */}
-        <div className="text-center py-12 px-8">
+        <div className={`text-center py-12 px-8 transition-all duration-1000 delay-200 ${
+          isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
           <h1 className="text-4xl lg:text-5xl font-bold text-blue-400 mb-4"><span  className='bg-gradient-to-r from-blue-500 to-blue-200 bg-clip-text text-transparent drop-shadow-xl'>Projects</span> 
             <span className='bg-gradient-to-r from-white to-purple-500 bg-clip-text text-transparent drop-shadow-xl'> & Resources</span>
           </h1>
@@ -102,7 +118,9 @@ export default function ProjectsCoursesPage() {
         </div>
 
         {/* Split Layout Container */}
-        <div className="max-w-7xl mx-auto px-8 pb-16">
+        <div className={`max-w-7xl mx-auto px-8 pb-16 transition-all duration-1000 delay-400 ${
+          isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
           {selectedItem && selectedType ? (
             /* Expanded Detail View */
             <div className="space-y-8">
@@ -356,20 +374,31 @@ export default function ProjectsCoursesPage() {
               
               {/* Projects Section - Left Side (2/3 width) */}
               <div className="lg:col-span-2 flex flex-col min-h-0">
-                <h2 className="text-2xl font-bold text-white mb-6 flex-shrink-0">
+                <h2 className={`text-2xl font-bold text-white mb-6 flex-shrink-0 transition-all duration-1000 delay-500 ${
+                  isPageLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+                }`}>
                   Featured Projects ({projects.length})
                 </h2>
                 
                 {projects.length === 0 ? (
-                  <div className="flex-1 flex items-center justify-center">
+                  <div className={`flex-1 flex items-center justify-center transition-all duration-1000 delay-600 ${
+                    isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                  }`}>
                     <p className="text-gray-400 text-center">No projects found</p>
                   </div>
                 ) : (
                   <div className="flex-1 overflow-y-auto pr-4 space-y-6 projects-scrollbar min-h-0">
-                    {projects.map((project) => (
+                    {projects.map((project, index) => (
                       <div
                         key={project.id}
-                        className="group cursor-pointer"
+                        className={`group cursor-pointer transition-all duration-1000 ${
+                          isPageLoaded 
+                            ? 'opacity-100 translate-x-0' 
+                            : 'opacity-0 -translate-x-8'
+                        }`}
+                        style={{
+                          transitionDelay: `${600 + (index * 100)}ms`
+                        }}
                         onClick={() => openDetails(project, 'project')}
                       >
                         <div className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl overflow-hidden hover:bg-black/30 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10">
@@ -458,20 +487,31 @@ export default function ProjectsCoursesPage() {
 
               {/* Courses Section - Right Side (1/3 width) */}
               <div className="flex flex-col min-h-0">
-                <h2 className="text-2xl font-bold text-white mb-6 flex-shrink-0">
+                <h2 className={`text-2xl font-bold text-white mb-6 flex-shrink-0 transition-all duration-1000 delay-500 ${
+                  isPageLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
+                }`}>
                   Courses ({courses.length})
                 </h2>
                 
                 {courses.length === 0 ? (
-                  <div className="flex-1 flex items-center justify-center">
+                  <div className={`flex-1 flex items-center justify-center transition-all duration-1000 delay-600 ${
+                    isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                  }`}>
                     <p className="text-gray-400 text-center">No courses found</p>
                   </div>
                 ) : (
                   <div className="flex-1 overflow-y-auto space-y-6 courses-scrollbar min-h-0">
-                    {courses.map((course) => (
+                    {courses.map((course, index) => (
                       <div
                         key={course.id}
-                        className="group cursor-pointer"
+                        className={`group cursor-pointer transition-all duration-1000 ${
+                          isPageLoaded 
+                            ? 'opacity-100 translate-x-0' 
+                            : 'opacity-0 translate-x-8'
+                        }`}
+                        style={{
+                          transitionDelay: `${600 + (index * 100)}ms`
+                        }}
                         onClick={() => openDetails(course, 'course')}
                       >
                         <div className="relative rounded-2xl overflow-hidden bg-black/60 backdrop-blur-lg border border-white/10 hover:bg-black/70 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10">

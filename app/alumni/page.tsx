@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import DashboardLayout from '@/components/DashboardLayout';
 import { ChevronLeft, ChevronRight, Linkedin, Mail } from 'lucide-react';
@@ -21,6 +21,12 @@ interface AlumniMember {
 export default function AlumniPage() {
   const [currentIndex, setCurrentIndex] = useState(2); // Start with middle item
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+
+  // Page load animation
+  useEffect(() => {
+    setIsPageLoaded(true);
+  }, []);
 
   const alumniMembers: AlumniMember[] = [
     {
@@ -94,9 +100,13 @@ export default function AlumniPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-full py-16">
+      <div className={`min-h-full py-16 transition-all duration-1000 ${
+        isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}>
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className={`text-center mb-16 transition-all duration-1000 delay-200 ${
+          isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
           <p className="text-gray-400 text-sm uppercase tracking-widest mb-4">
             YOUR SUCCESS STORIES START HERE
           </p>
@@ -110,7 +120,9 @@ export default function AlumniPage() {
         </div>
 
         {/* Alumni Carousel */}
-        <div className="relative max-w-7xl mx-auto px-8">
+        <div className={`relative max-w-7xl mx-auto px-8 transition-all duration-1000 delay-400 ${
+          isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
           {/* Navigation Buttons */}
           <button
             onClick={prevSlide}
@@ -280,7 +292,9 @@ export default function AlumniPage() {
         </div>
 
         {/* Stats Section */}
-        <div className="mt-20 max-w-4xl mx-auto px-8">
+        <div className={`mt-20 max-w-4xl mx-auto px-8 transition-all duration-1000 delay-600 ${
+          isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold text-purple-400 mb-2">100+</div>

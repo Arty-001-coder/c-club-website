@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Github, Linkedin, Mail, Users } from 'lucide-react';
@@ -20,6 +20,24 @@ interface TeamMember {
 
 export default function TeamPage() {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Page load animation
+  useEffect(() => {
+    setIsPageLoaded(true);
+  }, []);
+
+  // Handle member selection with fade transition
+  const handleMemberSelect = (member: TeamMember) => {
+    if (selectedMember?.id === member.id) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSelectedMember(member);
+      setIsTransitioning(false);
+    }, 200);
+  };
 
   // Sample team data - replace with your actual team members
   const teamMembers: TeamMember[] = [
@@ -75,9 +93,13 @@ export default function TeamPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-full">
+      <div className={`min-h-full transition-all duration-1000 ${
+        isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}>
         {/* Header Section */}
-        <div className="relative py-16 px-8">
+        <div className={`relative py-16 px-8 transition-all duration-1000 delay-200 ${
+          isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
           <div className="max-w-7xl mx-auto text-center">
             <div className="flex items-center justify-center mb-6">
               <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-white bg-clip-text text-transparent">
@@ -91,7 +113,9 @@ export default function TeamPage() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-8 pb-16">
+        <div className={`max-w-7xl mx-auto px-8 pb-16 transition-all duration-1000 delay-400 ${
+          isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
           <div className="grid lg:grid-cols-12 gap-8 h-[700px]">
             
             {/* Left Side - Team Members List */}
@@ -101,13 +125,20 @@ export default function TeamPage() {
                 
                 <div className="overflow-y-auto h-[580px] pr-2">
                   <div className="space-y-4">
-                    {teamMembers.map((member) => (
+                    {teamMembers.map((member, index) => (
                       <div
                         key={member.id}
                         className={`cursor-pointer transition-all duration-300 transform hover:scale-105 ${
                           selectedMember?.id === member.id ? 'scale-105' : ''
+                        } ${
+                          isPageLoaded 
+                            ? 'opacity-100 translate-x-0' 
+                            : 'opacity-0 -translate-x-4'
                         }`}
-                        onClick={() => setSelectedMember(member)}
+                        style={{
+                          transitionDelay: `${600 + (index * 100)}ms`
+                        }}
+                        onClick={() => handleMemberSelect(member)}
                       >
                         <div className="flex items-center space-x-4 p-3 rounded-xl hover:bg-gradient-to-r transition-all duration-200">
                           {/* Circular Photo */}
@@ -146,7 +177,9 @@ export default function TeamPage() {
             <div className="lg:col-span-8">
               <div className="bg-black/60 backdrop-blur-lg border border-white/20 rounded-2xl overflow-hidden h-full">
                 {selectedMember ? (
-                  <div className="grid md:grid-cols-5 h-full">
+                  <div className={`grid md:grid-cols-5 h-full transition-all duration-300 ${
+                    isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+                  }`}>
                     {/* Member Info */}
                     <div className="md:col-span-2 p-8 flex flex-col justify-center">
                       <div className="space-y-6">
@@ -213,7 +246,9 @@ export default function TeamPage() {
                   </div>
                 ) : (
                   /* Default State */
-                  <div className="h-full flex items-center justify-center">
+                  <div className={`h-full flex items-center justify-center transition-all duration-300 ${
+                    isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+                  }`}>
                     <div className="text-center">
                       <Users size={64} className="text-purple-400 mx-auto mb-4" />
                       <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-300 to-blue-300 bg-clip-text text-transparent mb-2">
@@ -230,7 +265,9 @@ export default function TeamPage() {
           </div>
 
           {/* Join Now Button */}
-          <div className="mt-8 text-center">
+          <div className={`mt-8 text-center transition-all duration-1000 delay-800 ${
+            isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
             <button className="group bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 hover:from-purple-500 hover:via-blue-500 hover:to-purple-500 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 border border-purple-400/30">
               <div className="flex items-center space-x-3">
                 <Users size={24} className="group-hover:animate-pulse" />
