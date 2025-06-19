@@ -61,7 +61,7 @@ export default function ResourcesPage() {
       category: 'Documentation',
       type: 'website',
       url: 'https://react-guide.iisertvm.ac.in',
-      image: '/images/resources/react-guide.jpg',
+      image: '/images/resources/hero-tech.png',
       author: 'Rahul Nair',
       date: 'Dec 2024',
       rating: 4.9,
@@ -77,7 +77,7 @@ export default function ResourcesPage() {
       category: 'Tool',
       type: 'github',
       url: 'https://github.com/iisertvm/python-ds-toolkit',
-      image: '/images/resources/hero-tech.png',
+      image: '/images/resources/python-ds.jpg',
       author: 'Dr. Meera Joshi',
       date: 'Nov 2024',
       rating: 4.8,
@@ -191,14 +191,15 @@ export default function ResourcesPage() {
 
   const currentResource = filteredResources[currentResourceIndex];
 
-  const goToPrevious = () => {
+  // INVERTED LOGIC: Up button now goes to NEXT resource
+  const goToNext = () => {
     if (isAnimating) return;
     setIsAnimating(true);
     setSlideDirection('up');
     
     setTimeout(() => {
       setCurrentResourceIndex((prev) => 
-        prev === 0 ? filteredResources.length - 1 : prev - 1
+        prev === filteredResources.length - 1 ? 0 : prev + 1
       );
       setTimeout(() => {
         setIsAnimating(false);
@@ -207,14 +208,15 @@ export default function ResourcesPage() {
     }, 200);
   };
 
-  const goToNext = () => {
+  // INVERTED LOGIC: Down button now goes to PREVIOUS resource
+  const goToPrevious = () => {
     if (isAnimating) return;
     setIsAnimating(true);
     setSlideDirection('down');
     
     setTimeout(() => {
       setCurrentResourceIndex((prev) => 
-        prev === filteredResources.length - 1 ? 0 : prev + 1
+        prev === 0 ? filteredResources.length - 1 : prev - 1
       );
       setTimeout(() => {
         setIsAnimating(false);
@@ -330,9 +332,9 @@ export default function ResourcesPage() {
                     </div>
                   )}
 
-                  {/* Up Arrow - Moved closer */}
+                  {/* Up Arrow - NOW GOES TO NEXT */}
                   <button
-                    onClick={goToPrevious}
+                    onClick={goToNext}
                     disabled={isAnimating}
                     className={`p-3 bg-black/30 backdrop-blur-lg border border-white/20 rounded-full text-white hover:bg-purple-600/20 hover:border-purple-400/30 transition-all duration-200 ${
                       isAnimating ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
@@ -388,9 +390,9 @@ export default function ResourcesPage() {
                     </div>
                   </div>
 
-                  {/* Down Arrow - Moved closer */}
+                  {/* Down Arrow - NOW GOES TO PREVIOUS */}
                   <button
-                    onClick={goToNext}
+                    onClick={goToPrevious}
                     disabled={isAnimating}
                     className={`p-3 bg-black/30 backdrop-blur-lg border border-white/20 rounded-full text-white hover:bg-purple-600/20 hover:border-purple-400/30 transition-all duration-200 ${
                       isAnimating ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
