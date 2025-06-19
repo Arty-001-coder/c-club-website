@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Calendar, User, Loader2, Plus, ExternalLink } from 'lucide-react';
 import { fetchBlogPosts, fetchPostsByCategory, getBlogImageUrl, BlogPost } from '@/lib/supabase';
 
 export default function BlogPage() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -75,6 +77,11 @@ export default function BlogPage() {
       return content;
     }
     return words.slice(0, 150).join(' ') + '...';
+  };
+
+  // Function to navigate to add new post page
+  const handleAddNewPost = () => {
+    router.push('/blogs/add');
   };
 
   // Function to open full article in new page
@@ -480,7 +487,10 @@ export default function BlogPage() {
               ))}
               
               {/* Add Post Button */}
-              <div className="group bg-black/10 backdrop-blur-lg border border-white/20 border-dashed rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 cursor-pointer flex items-center justify-center h-[500px]">
+              <div 
+                onClick={handleAddNewPost}
+                className="group bg-black/10 backdrop-blur-lg border border-white/20 border-dashed rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 cursor-pointer flex items-center justify-center h-[500px]"
+              >
                 <div className="text-center">
                   <div className="w-16 h-16 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                     <Plus size={32} className="text-cyan-400 group-hover:text-cyan-300 transition-colors" />
