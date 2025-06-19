@@ -63,63 +63,14 @@ export default function TeamPage() {
         id: '4',
         name: 'Ayush Siddha',
         role: 'Technical Lead',
-        description: 'Code The Work, Not Life ^_^',
+        description: 'ML, AI and Automation enthusiast. Just coding The Work, Not Life ^_^',
         image: '/images/team/siddha.png',
         github: 'https://github.com/AyushTheKingSiddha',
         linkedin:'https://www.linkedin.com/in/ayush-siddha-614a14332/',
         email: 'parimal24@iisertvm.ac.in',
         year: 'Second Year',
-        department:'Data Science'
-
-    },
-    {
-      id: '5',
-      name: 'Vikram Kumar',
-      role: 'DevOps Engineer',
-      description: 'Cloud infrastructure and automation specialist. Expert in Docker, Kubernetes, and CI/CD pipelines. Ensures our projects are scalable, secure, and efficiently deployed.',
-      image: '/images/team/vikram.jpg',
-      github: 'https://github.com/vikramkumar',
-      linkedin: 'https://linkedin.com/in/vikramkumar',
-      email: 'vikram@iisertvm.ac.in',
-      year: 'Final Year',
-      department: 'Chemistry'
-    },
-    {
-      id: '6',
-      name: 'Anjali Singh',
-      role: 'UI/UX Designer',
-      description: 'Creative designer passionate about user-centered design and accessibility. Proficient in Figma, Adobe Creative Suite, and frontend technologies. Brings aesthetic vision to our technical projects.',
-      image: '/images/team/anjali.jpg',
-      github: 'https://github.com/anjalisingh',
-      linkedin: 'https://linkedin.com/in/anjalisingh',
-      email: 'anjali@iisertvm.ac.in',
-      year: 'Second Year',
-      department: 'Physics'
-    },
-    {
-      id: '7',
-      name: 'Karthik Menon',
-      role: 'Backend Developer',
-      description: 'Database and API specialist with expertise in PostgreSQL, MongoDB, and GraphQL. Focuses on building robust, scalable backend systems that power our applications.',
-      image: '/images/team/karthik.jpg',
-      github: 'https://github.com/karthikmenon',
-      linkedin: 'https://linkedin.com/in/karthikmenon',
-      email: 'karthik@iisertvm.ac.in',
-      year: 'Third Year',
-      department: 'Computer Science'
-    },
-    {
-      id: '8',
-      name: 'Meera Joshi',
-      role: 'Data Science Lead',
-      description: 'Data scientist and researcher working on machine learning applications in scientific research. Expert in Python, R, and statistical modeling with publications in peer-reviewed journals.',
-      image: '/images/team/meera.jpg',
-      github: 'https://github.com/meerajoshi',
-      linkedin: 'https://linkedin.com/in/meerajoshi',
-      email: 'meera@iisertvm.ac.in',
-      year: 'PhD Scholar',
-      department: 'Mathematics'
-    }
+        department:'Data Science',
+      }
   ];
 
   return (
