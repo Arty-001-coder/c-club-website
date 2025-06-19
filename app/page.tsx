@@ -59,6 +59,7 @@ export default function HomePage() {
       <div className="h-full relative">
         <div className="relative z-10 h-full flex items-center justify-center p-8">
         <div className="max-w-7xl w-full grid lg:grid-cols-2 gap-12 items-center">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
           
           {/* Left Content */}
           <div className="space-y-8">
