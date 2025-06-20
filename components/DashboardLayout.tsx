@@ -461,7 +461,7 @@ export default function DashboardLayout({ children }: Props) {
           </div>
 
           {/* Navigation Items - Centered and Evenly Spaced */}
-          <div className="flex-1 flex flex-col justify-center space-y-4 py-6">
+          <div className="flex-1 flex flex-col justify-center space-y-4 py-4">
             {navItems.map((item, index) => {
               const Icon = item.icon;
               const isActive = activeButton === item.id;
