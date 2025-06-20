@@ -18,6 +18,18 @@ export default function HomePage() {
   const [showMainContent, setShowMainContent] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [eventDisplayTimer, setEventDisplayTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const codeLines = [
     '> Initializing future_tech.py',
@@ -300,34 +312,34 @@ export default function HomePage() {
         {/* Font Awesome CDN */}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         
-        <div className={`relative z-10 h-full flex items-center justify-center px-8 py-4 pb-0 transition-all duration-1000 ${
+        <div className={`relative z-10 h-full flex items-center justify-center px-4 sm:px-8 py-4 pb-0 transition-all duration-1000 ${
           showMainContent ? 'animate-in fade-in opacity-100' : 'opacity-0'
         }`}>
-        <div className="max-w-7xl w-full grid lg:grid-cols-2 gap-12 items-start">
+        <div className={`w-full ${isMobile ? 'max-w-sm' : 'max-w-7xl'} ${isMobile ? 'flex flex-col space-y-8' : 'grid lg:grid-cols-2 gap-12'} items-start`}>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
           
           {/* Left Content */}
-          <div className="space-y-8 transform -translate-y-4">
-            <div className="space-y-6">
-              <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+          <div className={`space-y-6 sm:space-y-8 ${isMobile ? '' : 'transform -translate-y-4'}`}>
+            <div className="space-y-4 sm:space-y-6">
+              <h1 className={`${isMobile ? 'text-3xl' : 'text-5xl lg:text-6xl'} font-bold leading-tight text-center sm:text-left`}>
                 <span className="text-purple-400">Innovate</span>{' '}
                 <span className="text-white">with</span>{' '}
                 <span className="text-blue-400">Code</span>
               </h1>
               
-              <p className="text-lg text-gray-100 leading-relaxed max-w-lg">
-                Join the coding revolution at IISER Thiruvananthapuram. We build solutions that{' '}
-                <span className="text-blue-400 font-semibold underline decoration-blue-400/50">transform</span>{' '}
+              <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-100 leading-relaxed ${isMobile ? 'text-center' : 'max-w-lg'}`}>
+                Join the coding club at IISER Thiruvananthapuram. We build solutions that{' '}
+                <span className="text-purple-400 font-semibold underline decoration-purple-400/50">transform</span>{' '}
                 the world through AI, machine learning, and cutting-edge tech.
               </p>
             </div>
 
             {/* Tech Tags */}
-            <div className="flex flex-wrap gap-3">
+            <div className={`flex flex-wrap gap-2 sm:gap-3 ${isMobile ? 'justify-center' : ''}`}>
               {techTags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-4 py-2 bg-purple-600/20 border border-purple-500/30 rounded-full text-purple-300 text-sm font-medium backdrop-blur-sm"
+                  className={`px-3 sm:px-4 py-2 bg-blue-600/20 border border-blue-500/30 rounded-full text-blue-300 ${isMobile ? 'text-xs' : 'text-sm'} font-medium backdrop-blur-sm`}
                 >
                   {tag}
                 </span>
@@ -335,17 +347,17 @@ export default function HomePage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="group bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center justify-center space-x-2">
+            <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'flex-col sm:flex-row gap-4'}`}>
+              <button className={`group bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white ${isMobile ? 'px-6 py-3' : 'px-8 py-4'} rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center justify-center space-x-2`}>
                 <span>🚀</span>
-                <span>Join Our Community</span>
+                <span className={isMobile ? 'text-sm' : ''}>Join Our Community</span>
               </button>
               
               <button 
                 onClick={handleExploreTech}
-                className="group bg-white/10 hover:bg-white/20 border border-white/20 hover:border-purple-400/50 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm flex items-center justify-center space-x-2">
+                className={`group bg-white/10 hover:bg-white/20 border border-white/20 hover:border-purple-400/50 text-white ${isMobile ? 'px-6 py-3' : 'px-8 py-4'} rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm flex items-center justify-center space-x-2`}>
                 <span>{'</>'}</span>
-                <span>Explore Tech</span>
+                <span className={isMobile ? 'text-sm' : ''}>Explore Tech</span>
               </button>
             </div>
           </div>
@@ -353,14 +365,14 @@ export default function HomePage() {
           {/* Right Content - Terminal */}
           <div className="relative">
             {/* Stats Section - Above Terminal */}
-            <div className="mb-6">
-              <div className="grid grid-cols-3 gap-8 text-center">
+            <div className="mb-4 sm:mb-6">
+              <div className={`grid grid-cols-3 ${isMobile ? 'gap-4' : 'gap-8'} text-center`}>
                 {stats.map((stat) => (
-                  <div key={stat.label} className="space-y-2">
-                    <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+                  <div key={stat.label} className="space-y-1 sm:space-y-2">
+                    <div className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-blue-300`}>
                       {stat.number}
                     </div>
-                    <div className="text-gray-200 text-sm font-medium">
+                    <div className={`text-gray-200 ${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>
                       {stat.label}
                     </div>
                   </div>
@@ -368,19 +380,19 @@ export default function HomePage() {
               </div>
             </div>
             
-            <div className="bg-black/40 backdrop-blur-lg border border-purple-500/30 rounded-2xl p-6 shadow-2xl shadow-purple-500/10">
+            <div className={`bg-black/70 border border-purple-500/30 rounded-2xl ${isMobile ? 'p-4' : 'p-6'} shadow-2xl shadow-purple-500/10`}>
               {/* Terminal Header */}
-              <div className="flex items-center space-x-2 pb-4 border-b border-purple-400/30">
+              <div className="flex items-center space-x-2 pb-3 sm:pb-4 border-b border-purple-400/30">
                 <div className="flex space-x-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div className={`${isMobile ? 'w-2 h-2' : 'w-3 h-3'} bg-red-500 rounded-full`}></div>
+                  <div className={`${isMobile ? 'w-2 h-2' : 'w-3 h-3'} bg-yellow-500 rounded-full`}></div>
+                  <div className={`${isMobile ? 'w-2 h-2' : 'w-3 h-3'} bg-green-500 rounded-full`}></div>
                 </div>
-                <div className="text-purple-300 text-sm ml-4">codingclub@iisertvm:~</div>
+                <div className={`text-purple-400 ${isMobile ? 'text-xs' : 'text-sm'} ml-3 sm:ml-4`}>codingclub@iisertvm:~</div>
               </div>
               
               {/* Terminal Content */}
-              <div className="mt-4 font-mono text-sm h-48 overflow-hidden">
+              <div className={`mt-3 sm:mt-4 font-mono ${isMobile ? 'text-xs h-36' : 'text-sm h-48'} overflow-hidden`}>
                 <pre className="text-blue-300 whitespace-pre-wrap leading-relaxed">
                   {displayedText}
                   <span className="animate-pulse text-purple-400">_</span>
@@ -388,10 +400,10 @@ export default function HomePage() {
                 
                 {/* View Details Button */}
                 {showEvents && showViewDetails && (
-                  <div className="mt-3">
+                  <div className="mt-2 sm:mt-3">
                     <button
                       onClick={() => handleViewDetails(upcomingEvents[currentEventIndex].pdfUrl)}
-                      className="text-yellow-300 hover:text-yellow-200 underline decoration-yellow-300/50 hover:decoration-yellow-200/70 text-sm font-mono transition-colors duration-200"
+                      className={`text-yellow-300 hover:text-yellow-200 underline decoration-yellow-300/50 hover:decoration-yellow-200/70 ${isMobile ? 'text-xs' : 'text-sm'} font-mono transition-colors duration-200`}
                     >
                       &gt; View Details [PDF]
                     </button>
@@ -404,23 +416,23 @@ export default function HomePage() {
         </div>
 
         {/* FAQ Section - Below Both Containers */}
-        <div className={`w-full max-w-7xl mx-auto px-8 pt-4 pb-8 transition-all duration-1000 ${
+        <div className={`w-full ${isMobile ? 'max-w-sm' : 'max-w-7xl'} mx-auto px-4 sm:px-8 pt-4 pb-8 transition-all duration-1000 ${
           showMainContent ? 'animate-in fade-in opacity-100' : 'opacity-0'
         }`}>
-          <h3 className="text-2xl font-bold text-white text-center mb-6">Frequently Asked Questions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <h3 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-white text-center mb-4 sm:mb-6`}>Frequently Asked Questions</h3>
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'}`}>
             {faqData.map((faq, index) => (
-              <div key={index} className="space-y-3">
+              <div key={index} className="space-y-2 sm:space-y-3">
                 <button
                   onClick={() => toggleFaq(index)}
                   className="w-full flex items-center justify-between text-left text-white hover:text-purple-300 transition-colors duration-200 group"
                 >
-                  <span className="font-semibold text-sm pr-2">{faq.question}</span>
+                  <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-sm'} pr-2`}>{faq.question}</span>
                   <div className="flex-shrink-0 transition-transform duration-200">
                     {expandedFaq === index ? (
-                      <ChevronUp className="w-4 h-4 text-purple-400" />
+                      <ChevronUp className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} text-purple-400`} />
                     ) : (
-                      <ChevronDown className="w-4 h-4 text-gray-300 group-hover:text-purple-400" />
+                      <ChevronDown className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} text-gray-300 group-hover:text-purple-400`} />
                     )}
                   </div>
                 </button>
@@ -430,7 +442,7 @@ export default function HomePage() {
                     ? 'max-h-40 opacity-100' 
                     : 'max-h-0 opacity-0'
                 }`}>
-                  <p className="text-sm text-gray-100 leading-relaxed pl-2 border-l-2 border-purple-400/50">
+                  <p className={`${isMobile ? 'text-sm' : 'text-sm'} text-gray-100 leading-relaxed pl-2 border-l-2 border-purple-400/50`}>
                     {faq.answer}
                   </p>
                 </div>
@@ -439,9 +451,9 @@ export default function HomePage() {
           </div>
           
           {/* Credit Text */}
-          <div className="text-center mt-8 pt-6">
-            <p className="text-gray-400 text-sm">
-              This website is created by Antrin Maji
+          <div className="text-center mt-6 sm:mt-8 pt-4 sm:pt-6">
+            <p className={`text-gray-400 ${isMobile ? 'text-xs' : 'text-sm'}`}>
+              Website created by Antrin Maji
             </p>
           </div>
         </div>
@@ -456,27 +468,27 @@ export default function HomePage() {
                 : 'animate-in slide-in-from-bottom opacity-100'
             }`}
           >
-            <div className="container mx-auto px-8 py-16">
+            <div className={`container mx-auto px-4 sm:px-8 py-8 sm:py-16`}>
               {/* Header */}
-              <div className="text-center mb-12">
-                <h2 className="text-5xl lg:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mb-6">
+              <div className="text-center mb-8 sm:mb-12">
+                <h2 className={`${isMobile ? 'text-3xl' : 'text-5xl lg:text-6xl'} font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mb-4 sm:mb-6`}>
                   Tech Stack
                 </h2>
-                <p className="text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed">
+                <p className={`text-gray-300 ${isMobile ? 'text-base' : 'text-xl'} ${isMobile ? 'mx-auto' : 'max-w-3xl mx-auto'} leading-relaxed`}>
                   We work with cutting-edge technologies to build innovative solutions and advance the frontiers of computing
                 </p>
                 
                 {/* Back to Top Button - Bare */}
                 <button
                   onClick={handleScrollToTop}
-                  className="absolute top-8 right-8 text-gray-400 hover:text-white transition-all duration-300 group hover:scale-110"
+                  className={`absolute ${isMobile ? 'top-4 right-4' : 'top-8 right-8'} text-gray-400 hover:text-white transition-all duration-300 group hover:scale-110`}
                 >
-                  <ChevronUp className="w-8 h-8 group-hover:translate-y-[-2px] transition-transform duration-300" />
+                  <ChevronUp className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} group-hover:translate-y-[-2px] transition-transform duration-300`} />
                 </button>
               </div>
 
               {/* Tech Categories Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-16">
+              <div className={`grid ${isMobile ? 'grid-cols-1 gap-8' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16'} mb-8 sm:mb-16`}>
                 {techStack.map((tech, index) => (
                   <div
                     key={tech.category}
@@ -484,17 +496,17 @@ export default function HomePage() {
                     style={{ animationDelay: `${index * 150}ms`, animationDuration: '600ms' }}
                   >
                     {/* Icon with Glow */}
-                    <div className={`mb-6 group-hover:scale-110 transition-all duration-300 ${tech.glowColor} ${tech.hoverGlow}`}>
-                      <i className={`${tech.icon} text-8xl ${tech.iconColor} group-hover:brightness-125 transition-all duration-300`}></i>
+                    <div className={`mb-4 sm:mb-6 group-hover:scale-110 transition-all duration-300 ${tech.glowColor} ${tech.hoverGlow}`}>
+                      <i className={`${tech.icon} ${isMobile ? 'text-6xl' : 'text-8xl'} ${tech.iconColor} group-hover:brightness-125 transition-all duration-300`}></i>
                     </div>
                     
                     {/* Title */}
-                    <h3 className="text-white font-bold mb-4 text-xl">
+                    <h3 className={`text-white font-bold mb-3 sm:mb-4 ${isMobile ? 'text-lg' : 'text-xl'}`}>
                       {tech.category}
                     </h3>
                     
                     {/* Description */}
-                    <p className="text-gray-300 leading-relaxed mb-6 text-sm">
+                    <p className={`text-gray-300 leading-relaxed mb-4 sm:mb-6 ${isMobile ? 'text-sm' : 'text-sm'}`}>
                       {tech.description}
                     </p>
                     
@@ -513,11 +525,11 @@ export default function HomePage() {
               </div>
 
               {/* Tools Section */}
-              <div className="border-t border-white/10 pt-12">
-                <h3 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mb-12">
+              <div className="border-t border-white/10 pt-8 sm:pt-12">
+                <h3 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mb-8 sm:mb-12`}>
                   Tools & Technologies
                 </h3>
-                <div className="flex flex-wrap justify-center gap-12 mb-12">
+                <div className={`flex flex-wrap justify-center ${isMobile ? 'gap-6' : 'gap-12'} mb-8 sm:mb-12`}>
                   {tools.map((tool, index) => (
                     <div
                       key={tool.name}
@@ -525,11 +537,11 @@ export default function HomePage() {
                       style={{ animationDelay: `${(index * 100) + 800}ms`, animationDuration: '500ms' }}
                     >
                       {/* Icon with Glow */}
-                      <div className={`mb-3 group-hover:scale-110 transition-all duration-300 ${tool.glowColor} ${tool.hoverGlow}`}>
-                        <i className={`${tool.icon} text-5xl ${tool.color} group-hover:brightness-125 transition-all duration-300`}></i>
+                      <div className={`mb-2 sm:mb-3 group-hover:scale-110 transition-all duration-300 ${tool.glowColor} ${tool.hoverGlow}`}>
+                        <i className={`${tool.icon} ${isMobile ? 'text-3xl' : 'text-5xl'} ${tool.color} group-hover:brightness-125 transition-all duration-300`}></i>
                       </div>
                       {/* Tool Name */}
-                      <span className={`font-semibold text-lg ${tool.color}`}>
+                      <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-lg'} ${tool.color}`}>
                         {tool.name}
                       </span>
                     </div>

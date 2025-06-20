@@ -364,7 +364,7 @@ export default function BlogPage() {
         <div className={`relative overflow-hidden h-[900px] rounded-b-3xl transition-all duration-1000 delay-200 ${
           isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <div className="absolute inset-0 bg-black/55 backdrop-blur-lg border border-white/10" />
+          <div className="absolute inset-0 bg-black/70 border border-white/10" />
           
           {/* Hero Content */}
           <div className="relative z-10 h-full p-8">

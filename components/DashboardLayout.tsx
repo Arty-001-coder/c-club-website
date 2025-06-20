@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, useState, useEffect } from 'react';
-import { Home, Search, Users, FolderOpen, Users2, BookOpen, Archive, Mail, MessageCircle } from 'lucide-react';
+import { Home, Search, FolderOpen, Users2, BookOpen, Archive, Mail, MessageCircle, GraduationCap } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 
@@ -17,6 +17,18 @@ export default function DashboardLayout({ children }: Props) {
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [logoExpanded, setLogoExpanded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Extract current page from pathname and set active button
   useEffect(() => {
@@ -104,10 +116,9 @@ export default function DashboardLayout({ children }: Props) {
     setSearchQuery('');
   };
 
-
   const navItems = [
     { id: 'overview', icon: Home, label: 'Home', path: '/' },
-    { id: 'alumni', icon: Users, label: 'Alumni', path: '/alumni' },
+    { id: 'alumni', icon: GraduationCap, label: 'Alumni', path: '/alumni' },
     { id: 'projects', icon: FolderOpen, label: 'Projects & Courses', path: '/projects' },
     { id: 'team', icon: Users2, label: 'Team', path: '/team' },
     { id: 'blogs', icon: BookOpen, label: 'Blogs', path: '/blogs' },
@@ -149,8 +160,266 @@ export default function DashboardLayout({ children }: Props) {
     },
   ];
 
+  // Desktop Layout
+  if (!isMobile) {
+    return (
+      <div className="h-screen flex flex-col overflow-hidden relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url("/back.png")' }}>
+        {/* Background overlay for better contrast */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/70 to-black/80 backdrop-blur-sm -z-10"></div>
+        
+        {/* Animated background elements */}
+        <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" />
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-tl from-blue-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '4s' }} />
+
+        {/* Top Navbar */}
+        <nav className="mt-4 h-14 w-full flex items-center justify-center px-4 relative flex-shrink-0 z-10">
+          <div className="flex items-center space-x-4 w-5/6 max-w-6xl">
+            {/* Logo Container - Separate from navbar */}
+            <div className="flex-shrink-0">
+              <button
+                onClick={toggleLogo}
+                className={`
+                  bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
+                  text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
+                  ${logoExpanded 
+                    ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
+                    : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
+                  }
+                  group flex items-center space-x-2 relative
+                `}
+              >
+                <span className={`
+                  text-xs font-medium transition-all duration-300 ease-out
+                  ${logoExpanded ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
+                `}>
+                  Coding Club
+                </span>
+                
+                {/* Active state indicator for logo */}
+                {logoExpanded && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
+                )}
+              </button>
+            </div>
+
+            {/* Main Navigation - Frosted glass container */}
+            <div className="bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-6 py-2 shadow-2xl flex-1 transition-all duration-500 ease-out">
+              <div className="flex items-center justify-center relative">
+                
+                {/* Logo details overlay - appears when logo is expanded */}
+                <div className={`
+                  absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out
+                  ${logoExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
+                `}>
+                  <div className="flex items-center space-x-6 w-full max-w-2xl">
+                    {/* Club Logo and Name */}
+                    <div className="flex items-center space-x-3">
+                      {/* Replace with actual logo image */}
+                      <div className="w-10 h-10 rounded-4xl  shadow-lg shadow-purple-500/50 overflow-hidden bg-gradient-to-br items-center justify-center">
+                        <Image 
+                          src="/logo.png" 
+                          alt="CCIT Logo" 
+                          width={40}
+                          height={40}
+                          className="object-cover w-full h-full"
+                          onError={() => {
+                            // Image will be hidden and fallback gradient background will show
+                            console.log('Logo image failed to load, showing fallback');
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm text-white bg-clip-text">
+                          CCIT
+                        </h3>
+                      </div>
+                    </div>
+
+                    {/* Social Links */}
+                    <div className="flex items-center space-x-3">
+                      {socialLinks.map((social) => {
+                        const IconComponent = social.icon;
+                        return (
+                          <a
+                            key={social.name}
+                            href={social.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group/social flex items-center space-x-2 px-3 py-1.5 rounded-full hover:bg-black/30 hover:backdrop-blur-lg hover:border hover:border-white/20 transition-all duration-300 ease-out transform hover:scale-105"
+                          >
+                            <IconComponent className="w-4 h-4 text-gray-300 group-hover/social:text-white transition-colors duration-300" />
+                            <span className="text-xs text-gray-300 group-hover/social:text-white transition-all duration-300">
+                              {social.name}
+                            </span>
+                          </a>
+                        );
+                      })}
+                      
+                      {/* IISER TVM Text */}
+                      <span className="text-sm font-semibold text-white bg-clip-text px-2">
+                        IISER TRIVANDRUM
+                      </span>
+                    </div>
+
+          
+                  </div>
+                </div>
+
+                {/* Search bar overlay - appears when search is expanded */}
+                <div className={`
+                  absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out
+                  ${searchExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
+                `}>
+                  <form onSubmit={handleSearchSubmit} className="flex items-center space-x-3 w-full max-w-md">
+                    <Search size={20} className="text-white" />
+                    <input
+                      type="text"
+                      placeholder="Search anything..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="bg-transparent text-white placeholder-gray-300 outline-none flex-1 text-sm"
+                      autoFocus={searchExpanded}
+                    />
+                    <button
+                      type="button"
+                      onClick={closeSearch}
+                      className="text-white hover:text-gray-300 transition-colors duration-200 p-1 hover:bg-white/10 rounded-full ml-2"
+                    >
+                      ✕
+                    </button>
+                  </form>
+                </div>
+
+                {/* Navigation buttons */}
+                <div className={`
+                  flex items-center space-x-1 transition-all duration-500 ease-out
+                  ${(searchExpanded || logoExpanded) ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}
+                `}>
+                  {navItems.map((item, index) => {
+                    const Icon = item.icon;
+                    const isActive = activeButton === item.id;
+                    
+                    return (
+                      <button
+                        key={item.id}
+                        className={`
+                          relative text-white px-4 py-2 rounded-full transition-all duration-300 ease-out
+                          transform hover:scale-110 hover:-translate-y-0.5
+                          ${isActive 
+                            ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border border-purple-400/50 backdrop-blur-sm' 
+                            : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
+                          }
+                          ${isTransitioning ? 'pointer-events-none' : ''}
+                          group flex items-center space-x-2
+                        `}
+                        style={{
+                          animationDelay: `${index * 50}ms`,
+                        }}
+                        onClick={() => goTo(item.path, item.id)}
+                      >
+                        <Icon 
+                          size={18} 
+                          className={`
+                            transition-all duration-300 ease-out
+                            ${isActive ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
+                          `}
+                        />
+                        
+                        {/* Label text beside icon */}
+                        <span className={`
+                          text-xs font-medium transition-all duration-300 ease-out
+                          ${isActive ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
+                        `}>
+                          {item.label}
+                        </span>
+
+                        {/* Active state indicator - enhanced */}
+                        {isActive && (
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Separate Search Button */}
+            <div className="flex-shrink-0">
+              <button
+                onClick={toggleSearch}
+                className={`
+                  bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
+                  text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
+                  ${searchExpanded 
+                    ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
+                    : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
+                  }
+                  group flex items-center space-x-2 relative
+                `}
+              >
+                <Search 
+                  size={18} 
+                  className={`
+                    transition-all duration-300 ease-out
+                    ${searchExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
+                  `}
+                />
+                <span className={`
+                  text-xs font-medium transition-all duration-300 ease-out
+                  ${searchExpanded ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
+                `}>
+                  Search
+                </span>
+                
+                {/* Active state indicator for search */}
+                {searchExpanded && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
+                )}
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6 relative min-h-0 z-10">
+          {/* Content wrapper with transition */}
+          <div 
+            className={`
+               rounded-3xl shadow-2xl w-full h-full relative
+              transition-all duration-300 ease-out
+              ${isTransitioning ? 'opacity-95 scale-[0.998]' : 'opacity-100 scale-100'}
+            `}
+          >
+            {/* Animated background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-50/20 via-transparent to-blue-50/20 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
+            
+            {/* Loading overlay during transitions */}
+            {isTransitioning && (
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-10 flex items-center justify-center rounded-3xl">
+                <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+            
+            {/* Scrollable Content */}
+            <div 
+              className={`
+                h-full overflow-y-auto overflow-x-hidden transition-all duration-200 ease-out rounded-3xl
+                ${isTransitioning ? 'opacity-70 blur-sm' : 'opacity-100 blur-0'}
+              `}
+            >
+              {children}
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Mobile Layout with Side Navigation
   return (
-    <div className="h-screen flex flex-col overflow-hidden relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url("/back.png")' }}>
+    <div className="h-screen flex overflow-hidden relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url("/back.png")' }}>
       {/* Background overlay for better contrast */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/70 to-black/80 backdrop-blur-sm -z-10"></div>
       
@@ -159,218 +428,205 @@ export default function DashboardLayout({ children }: Props) {
       <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-tl from-blue-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '2s' }} />
       <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '4s' }} />
 
-      {/* Top Navbar */}
-      <nav className="mt-4 h-14 w-full flex items-center justify-center px-4 relative flex-shrink-0 z-10">
-        <div className="flex items-center space-x-4 w-5/6 max-w-6xl">
-          {/* Logo Container - Separate from navbar */}
-          <div className="flex-shrink-0">
-            <button
-              onClick={toggleLogo}
-              className={`
-                bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
-                text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
-                ${logoExpanded 
-                  ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
-                  : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
-                }
-                group flex items-center space-x-2 relative
-              `}
-            >
-              <span className={`
-                text-xs font-medium transition-all duration-300 ease-out
-                ${logoExpanded ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
-              `}>
-                Coding Club
-              </span>
-              
-              {/* Active state indicator for logo */}
-              {logoExpanded && (
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
-              )}
-            </button>
-          </div>
-
-          {/* Main Navigation - Frosted glass container */}
-          <div className="bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-6 py-2 shadow-2xl flex-1 transition-all duration-500 ease-out">
-            <div className="flex items-center justify-center relative">
-              
-              {/* Logo details overlay - appears when logo is expanded */}
-              <div className={`
-                absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out
-                ${logoExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
-              `}>
-                <div className="flex items-center space-x-6 w-full max-w-2xl">
-                  {/* Club Logo and Name */}
-                  <div className="flex items-center space-x-3">
-                    {/* Replace with actual logo image */}
-                    <div className="w-10 h-10 rounded-4xl  shadow-lg shadow-purple-500/50 overflow-hidden bg-gradient-to-br items-center justify-center">
-                      <Image 
-                        src="/logo.png" 
-                        alt="CCIT Logo" 
-                        width={40}
-                        height={40}
-                        className="object-cover w-full h-full"
-                        onError={() => {
-                          // Image will be hidden and fallback gradient background will show
-                          console.log('Logo image failed to load, showing fallback');
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm text-white bg-clip-text">
-                        CCIT
-                      </h3>
-                    </div>
-                  </div>
-
-                  {/* Social Links */}
-                  <div className="flex items-center space-x-3">
-                    {socialLinks.map((social) => {
-                      const IconComponent = social.icon;
-                      return (
-                        <a
-                          key={social.name}
-                          href={social.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="group/social flex items-center space-x-2 px-3 py-1.5 rounded-full hover:bg-black/30 hover:backdrop-blur-lg hover:border hover:border-white/20 transition-all duration-300 ease-out transform hover:scale-105"
-                        >
-                          <IconComponent className="w-4 h-4 text-gray-300 group-hover/social:text-white transition-colors duration-300" />
-                          <span className="text-xs text-gray-300 group-hover/social:text-white transition-all duration-300">
-                            {social.name}
-                          </span>
-                        </a>
-                      );
-                    })}
-                    
-                    {/* IISER TVM Text */}
-                    <span className="text-sm font-semibold text-white bg-clip-text px-2">
-                      IISER TRIVANDRUM
-                    </span>
-                  </div>
-
-        
-                </div>
-              </div>
-
-              {/* Search bar overlay - appears when search is expanded */}
-              <div className={`
-                absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out
-                ${searchExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
-              `}>
-                <form onSubmit={handleSearchSubmit} className="flex items-center space-x-3 w-full max-w-md">
-                  <Search size={20} className="text-white" />
-                  <input
-                    type="text"
-                    placeholder="Search anything..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-transparent text-white placeholder-gray-300 outline-none flex-1 text-sm"
-                    autoFocus={searchExpanded}
-                  />
-                  <button
-                    type="button"
-                    onClick={closeSearch}
-                    className="text-white hover:text-gray-300 transition-colors duration-200 p-1 hover:bg-white/10 rounded-full ml-2"
-                  >
-                    ✕
-                  </button>
-                </form>
-              </div>
-
-              {/* Navigation buttons */}
-              <div className={`
-                flex items-center space-x-1 transition-all duration-500 ease-out
-                ${(searchExpanded || logoExpanded) ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}
-              `}>
-                {navItems.map((item, index) => {
-                  const Icon = item.icon;
-                  const isActive = activeButton === item.id;
-                  
-                  return (
-                    <button
-                      key={item.id}
-                      className={`
-                        relative text-white px-4 py-2 rounded-full transition-all duration-300 ease-out
-                        transform hover:scale-110 hover:-translate-y-0.5
-                        ${isActive 
-                          ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border border-purple-400/50 backdrop-blur-sm' 
-                          : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
-                        }
-                        ${isTransitioning ? 'pointer-events-none' : ''}
-                        group flex items-center space-x-2
-                      `}
-                      style={{
-                        animationDelay: `${index * 50}ms`,
-                      }}
-                      onClick={() => goTo(item.path, item.id)}
-                    >
-                      <Icon 
-                        size={18} 
-                        className={`
-                          transition-all duration-300 ease-out
-                          ${isActive ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
-                        `}
-                      />
-                      
-                      {/* Label text beside icon */}
-                      <span className={`
-                        text-xs font-medium transition-all duration-300 ease-out
-                        ${isActive ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
-                      `}>
-                        {item.label}
-                      </span>
-
-                      {/* Active state indicator - enhanced */}
-                      {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Separate Search Button */}
-          <div className="flex-shrink-0">
+      {/* Side Navigation */}
+      <nav className="w-24 flex-shrink-0 flex flex-col p-6 z-10">
+        <div className="flex flex-col h-full justify-between">
+          
+          {/* Search Button at Top */}
+          <div className="flex justify-center">
             <button
               onClick={toggleSearch}
               className={`
-                bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
-                text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
+                w-16 h-16 rounded-2xl transition-all duration-300 ease-out transform hover:scale-110
                 ${searchExpanded 
-                  ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
-                  : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
+                  ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25' 
+                  : 'bg-black/20 hover:bg-white/20 backdrop-blur-lg border border-white/20'
                 }
-                group flex items-center space-x-2 relative
+                group flex items-center justify-center relative
               `}
             >
               <Search 
-                size={18} 
+                size={24} 
                 className={`
                   transition-all duration-300 ease-out
                   ${searchExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
                 `}
               />
-              <span className={`
-                text-xs font-medium transition-all duration-300 ease-out
-                ${searchExpanded ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
-              `}>
-                Search
-              </span>
               
               {/* Active state indicator for search */}
               {searchExpanded && (
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl animate-pulse" />
+              )}
+            </button>
+          </div>
+
+          {/* Navigation Items - Centered and Evenly Spaced */}
+          <div className="flex-1 flex flex-col justify-center space-y-6 py-8">
+            {navItems.map((item, index) => {
+              const Icon = item.icon;
+              const isActive = activeButton === item.id;
+              
+              return (
+                <div key={item.id} className="flex justify-center">
+                  <button
+                    className={`
+                      relative w-16 h-16 rounded-2xl transition-all duration-300 ease-out
+                      transform hover:scale-110
+                      ${isActive 
+                        ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25' 
+                        : 'bg-black/20 hover:bg-white/20 backdrop-blur-lg border border-white/20'
+                      }
+                      ${isTransitioning ? 'pointer-events-none' : ''}
+                      group flex items-center justify-center
+                    `}
+                    style={{
+                      animationDelay: `${index * 50}ms`,
+                    }}
+                    onClick={() => goTo(item.path, item.id)}
+                    title={item.label}
+                  >
+                    <Icon 
+                      size={24} 
+                      className={`
+                        transition-all duration-300 ease-out
+                        ${isActive ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
+                      `}
+                    />
+
+                    {/* Active state indicator */}
+                    {isActive && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl animate-pulse" />
+                    )}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Coding Club Button at Bottom */}
+          <div className="flex justify-center">
+            <button
+              onClick={toggleLogo}
+              className={`
+                w-16 h-16 rounded-2xl transition-all duration-300 ease-out transform hover:scale-110
+                ${logoExpanded 
+                  ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25' 
+                  : 'bg-black/20 hover:bg-white/20 backdrop-blur-lg border border-white/20'
+                }
+                group flex items-center justify-center relative
+              `}
+            >
+              <span className={`
+                text-lg font-bold transition-all duration-300 ease-out
+                ${logoExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white'}
+              `}>
+                C²
+              </span>
+              
+              {/* Active state indicator for logo */}
+              {logoExpanded && (
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl animate-pulse" />
               )}
             </button>
           </div>
         </div>
       </nav>
 
+      {/* Search Overlay for Mobile */}
+      {searchExpanded && (
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-lg z-50 flex items-start justify-center pt-20">
+          <div className="bg-black/40 backdrop-blur-lg border border-white/20 rounded-2xl p-6 mx-4 w-full max-w-md">
+            <form onSubmit={handleSearchSubmit} className="flex items-center space-x-3">
+              <Search size={20} className="text-white" />
+              <input
+                type="text"
+                placeholder="Search anything..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-transparent text-white placeholder-gray-300 outline-none flex-1 text-sm"
+                autoFocus={searchExpanded}
+              />
+              <button
+                type="button"
+                onClick={closeSearch}
+                className="text-white hover:text-gray-300 transition-colors duration-200 p-1 hover:bg-white/10 rounded-full ml-2"
+              >
+                ✕
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Logo Details Overlay for Mobile */}
+      {logoExpanded && (
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-lg z-50 flex items-center justify-center p-4">
+          <div className="bg-black/40 backdrop-blur-lg border border-white/20 rounded-2xl p-6 mx-4 w-full max-w-md">
+            <div className="text-center space-y-4">
+              {/* Club Logo and Name */}
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <div className="w-12 h-12 rounded-full shadow-lg shadow-purple-500/50 overflow-hidden bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                  <Image 
+                    src="/logo.png" 
+                    alt="CCIT Logo" 
+                    width={48}
+                    height={48}
+                    className="object-cover w-full h-full"
+                    onError={() => {
+                      console.log('Logo image failed to load, showing fallback');
+                    }}
+                  />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-white">
+                    CCIT
+                  </h3>
+                  <p className="text-sm text-gray-300">Coding Club</p>
+                </div>
+              </div>
+
+              {/* IISER TVM Text */}
+              <div className="text-center mb-6">
+                <span className="text-lg font-semibold text-white bg-clip-text">
+                  IISER TRIVANDRUM
+                </span>
+              </div>
+
+              {/* Social Links */}
+              <div className="space-y-3">
+                {socialLinks.map((social) => {
+                  const IconComponent = social.icon;
+                  return (
+                    <a
+                      key={social.name}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/social flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-black/30 hover:backdrop-blur-lg hover:border hover:border-white/20 transition-all duration-300 ease-out transform hover:scale-105 w-full"
+                    >
+                      <IconComponent className="w-5 h-5 text-gray-300 group-hover/social:text-white transition-colors duration-300" />
+                      <span className="text-sm text-gray-300 group-hover/social:text-white transition-all duration-300">
+                        {social.name}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setLogoExpanded(false)}
+                className="mt-6 w-full px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-white transition-all duration-300"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
-      <main className="flex-1 p-6 relative min-h-0 z-10">
+      <main className="flex-1 p-4 relative min-h-0 z-10 ml-6">
         {/* Content wrapper with transition */}
         <div 
           className={`
