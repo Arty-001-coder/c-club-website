@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Users, ExternalLink, X, Github, Globe, Play, Clock, BookOpen, Loader2, ChevronLeft } from 'lucide-react';
+import { ExternalLink, X, Github, Globe, Play, Clock, BookOpen, Loader2, ChevronLeft } from 'lucide-react';
 import { projectsApi, coursesApi, ProjectWithImage, CourseWithImage } from '@/lib/supabase';
 
 export default function ProjectsCoursesPage() {
@@ -289,15 +289,6 @@ export default function ProjectsCoursesPage() {
                             {/* Course metadata - Stack vertically on mobile */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-4 sm:space-y-0">
                               <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 lg:w-8 lg:h-8 rounded-full overflow-hidden border-2 border-white/20">
-                                  <Image
-                                    src={(selectedItem as CourseWithImage).instructorAvatar}
-                                    alt={(selectedItem as CourseWithImage).instructor}
-                                    width={40}
-                                    height={40}
-                                    className="object-cover"
-                                  />
-                                </div>
                                 <div>
                                   <p className="text-blue-200 font-semibold drop-shadow">{(selectedItem as CourseWithImage).instructor}</p>
                                   <p className="text-gray-200 text-sm drop-shadow">Instructor</p>
@@ -311,13 +302,6 @@ export default function ProjectsCoursesPage() {
                                 </div>
                                 <div>
                                   <p className="text-white font-semibold drop-shadow">Starts {(selectedItem as CourseWithImage).startDate}</p>
-                                  <div className="flex items-center space-x-2 text-sm text-gray-200">
-                                    <span className="drop-shadow">{(selectedItem as CourseWithImage).enrolledStudents} students</span>
-                                    <span className="flex items-center space-x-1 drop-shadow">
-                                      <span className="text-yellow-300">★</span>
-                                      <span>{(selectedItem as CourseWithImage).rating}</span>
-                                    </span>
-                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -638,30 +622,10 @@ export default function ProjectsCoursesPage() {
                                     <span>{course.lessons} lessons</span>
                                   </div>
                                 </div>
-                                
-                                <div className="flex items-center justify-between text-xs">
-                                  <div className="flex items-center space-x-1 text-gray-300">
-                                    <Users size={12} />
-                                    <span>{course.enrolledStudents} students</span>
-                                  </div>
-                                  <div className="flex items-center space-x-1">
-                                    <span className="text-yellow-400">★</span>
-                                    <span className="text-gray-300">{course.rating}</span>
-                                  </div>
-                                </div>
                               </div>
 
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-2">
-                                  <div className="w-6 h-6 rounded-full overflow-hidden">
-                                    <Image
-                                      src={course.instructorAvatar}
-                                      alt={course.instructor}
-                                      width={24}
-                                      height={24}
-                                      className="object-cover"
-                                    />
-                                  </div>
                                   <div>
                                     <p className="text-white text-xs font-medium">{course.instructor}</p>
                                   </div>

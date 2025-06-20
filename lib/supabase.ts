@@ -241,11 +241,8 @@ export interface Course {
   description: string
   full_description: string
   instructor: string
-  instructor_avatar: string | null
   duration: string
   level: 'Beginner' | 'Intermediate' | 'Advanced'
-  enrolled_students: number
-  rating: number
   lessons: number
   join_link: string
   syllabus: string[]
@@ -266,14 +263,12 @@ export interface ProjectWithImage extends Omit<Project, 'author_avatar'> {
   techStack: string[]
 }
 
-export interface CourseWithImage extends Omit<Course, 'instructor_avatar' | 'join_link' | 'start_date'> {
+export interface CourseWithImage extends Omit<Course, 'join_link' | 'start_date'> {
   image: string
-  instructorAvatar: string
   fullDescription: string
   joinLink: string
   startDate: string
   whatYouWillLearn: string[]
-  enrolledStudents: number
 }
 
 // Utility function to get image URL from storage
@@ -322,13 +317,13 @@ export const getAvatarUrlWithFallback = async (id: string): Promise<string> => {
       .from('images')
       .list('', {
         limit: 1000,
-        search: id
+        search: `${id}_avatar`
       })
     
     if (!error && files && files.length > 0) {
-      // Find the file that matches our ID
+      // Find the file that matches our ID_avatar pattern
       const matchedFile = files.find(file => 
-        file.name.startsWith(id + '.') && 
+        file.name.startsWith(`${id}_avatar.`) && 
         extensions.some(ext => file.name.endsWith('.' + ext))
       )
       
@@ -344,11 +339,11 @@ export const getAvatarUrlWithFallback = async (id: string): Promise<string> => {
     console.warn('Error listing files for avatar:', error)
   }
   
-  // Fallback: try common extensions
+  // Fallback: try common extensions with {id}_avatar pattern
   for (const ext of extensions) {
     const { data } = supabase.storage
       .from('images')
-      .getPublicUrl(`${id}.${ext}`)
+      .getPublicUrl(`${id}_avatar.${ext}`)
     
     // Return the first URL (jpg by default) - browser will handle 404s
     return data.publicUrl
@@ -366,7 +361,7 @@ export const getAvatarUrlSync = (id: string, extension: string = 'jpg'): string 
 
   const { data } = supabase.storage
     .from('images')
-    .getPublicUrl(`${id}.${extension}`)
+    .getPublicUrl(`${id}_avatar.${extension}`)
   
   return data.publicUrl || '/images/default-avatar.jpg'
 }
@@ -383,7 +378,7 @@ export const getAvatarUrlsWithFallbacks = (id: string): string[] => {
   for (const ext of extensions) {
     const { data } = supabase.storage
       .from('images')
-      .getPublicUrl(`${id}.${ext}`)
+      .getPublicUrl(`${id}_avatar.${ext}`)
     
     if (data.publicUrl) {
       urls.push(data.publicUrl)
@@ -394,17 +389,6 @@ export const getAvatarUrlsWithFallbacks = (id: string): string[] => {
   urls.push('/images/default-avatar.jpg')
   
   return urls
-}
-
-// Helper function to extract clean author/instructor ID
-const extractPersonId = (person: string, avatarField?: string | null): string => {
-  if (avatarField) {
-    // Extract ID from existing avatar path
-    return avatarField.replace(/\/images\/team\/|\/images\/|\.jpg|\.jpeg|\.png|\.webp/g, '')
-  }
-  
-  // Generate ID from person name
-  return person.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 }
 
 // Projects API functions
@@ -423,9 +407,8 @@ export const projectsApi = {
       data.map(async (project): Promise<ProjectWithImage> => {
         const imageUrl = await getImageUrlWithFallback('images', 'projects', project.id)
         
-        // Get author avatar using the improved function
-        const authorId = extractPersonId(project.author, project.author_avatar)
-        const authorAvatarUrl = await getAvatarUrlWithFallback(authorId)
+        // Get author avatar using the project ID with _avatar suffix
+        const authorAvatarUrl = await getAvatarUrlWithFallback(project.id)
         
         return {
           ...project,
@@ -455,9 +438,8 @@ export const projectsApi = {
     
     const imageUrl = await getImageUrlWithFallback('images', 'projects', data.id)
     
-    // Get author avatar using the improved function
-    const authorId = extractPersonId(data.author, data.author_avatar)
-    const authorAvatarUrl = await getAvatarUrlWithFallback(authorId)
+    // Get author avatar using the project ID with _avatar suffix
+    const authorAvatarUrl = await getAvatarUrlWithFallback(data.id)
     
     return {
       ...data,
@@ -484,9 +466,8 @@ export const projectsApi = {
       data.map(async (project): Promise<ProjectWithImage> => {
         const imageUrl = await getImageUrlWithFallback('images', 'projects', project.id)
         
-        // Get author avatar using the improved function
-        const authorId = extractPersonId(project.author, project.author_avatar)
-        const authorAvatarUrl = await getAvatarUrlWithFallback(authorId)
+        // Get author avatar using the project ID with _avatar suffix
+        const authorAvatarUrl = await getAvatarUrlWithFallback(project.id)
         
         return {
           ...project,
@@ -517,9 +498,8 @@ export const projectsApi = {
       data.map(async (project): Promise<ProjectWithImage> => {
         const imageUrl = await getImageUrlWithFallback('images', 'projects', project.id)
         
-        // Get author avatar using the improved function
-        const authorId = extractPersonId(project.author, project.author_avatar)
-        const authorAvatarUrl = await getAvatarUrlWithFallback(authorId)
+        // Get author avatar using the project ID with _avatar suffix
+        const authorAvatarUrl = await getAvatarUrlWithFallback(project.id)
         
         return {
           ...project,
@@ -553,19 +533,13 @@ export const coursesApi = {
       data.map(async (course): Promise<CourseWithImage> => {
         const imageUrl = await getImageUrlWithFallback('images', 'courses', course.id)
         
-        // Get instructor avatar using the improved function
-        const instructorId = extractPersonId(course.instructor, course.instructor_avatar)
-        const instructorAvatarUrl = await getAvatarUrlWithFallback(instructorId)
-        
         return {
           ...course,
           image: imageUrl,
-          instructorAvatar: instructorAvatarUrl,
           fullDescription: course.full_description,
           joinLink: course.join_link,
           startDate: course.start_date,
-          whatYouWillLearn: course.what_you_will_learn,
-          enrolledStudents: course.enrolled_students
+          whatYouWillLearn: course.what_you_will_learn
         }
       })
     )
@@ -586,19 +560,13 @@ export const coursesApi = {
     
     const imageUrl = await getImageUrlWithFallback('images', 'courses', data.id)
     
-    // Get instructor avatar using the improved function
-    const instructorId = extractPersonId(data.instructor, data.instructor_avatar)
-    const instructorAvatarUrl = await getAvatarUrlWithFallback(instructorId)
-    
     return {
       ...data,
       image: imageUrl,
-      instructorAvatar: instructorAvatarUrl,
       fullDescription: data.full_description,
       joinLink: data.join_link,
       startDate: data.start_date,
-      whatYouWillLearn: data.what_you_will_learn,
-      enrolledStudents: data.enrolled_students
+      whatYouWillLearn: data.what_you_will_learn
     }
   },
 
@@ -616,19 +584,13 @@ export const coursesApi = {
       data.map(async (course): Promise<CourseWithImage> => {
         const imageUrl = await getImageUrlWithFallback('images', 'courses', course.id)
         
-        // Get instructor avatar using the improved function
-        const instructorId = extractPersonId(course.instructor, course.instructor_avatar)
-        const instructorAvatarUrl = await getAvatarUrlWithFallback(instructorId)
-        
         return {
           ...course,
           image: imageUrl,
-          instructorAvatar: instructorAvatarUrl,
           fullDescription: course.full_description,
           joinLink: course.join_link,
           startDate: course.start_date,
-          whatYouWillLearn: course.what_you_will_learn,
-          enrolledStudents: course.enrolled_students
+          whatYouWillLearn: course.what_you_will_learn
         }
       })
     )
@@ -636,12 +598,12 @@ export const coursesApi = {
     return coursesWithImages
   },
 
-  // Get top-rated courses
-  async getTopRated(limit: number = 10): Promise<CourseWithImage[]> {
+  // Get recent courses
+  async getRecent(limit: number = 10): Promise<CourseWithImage[]> {
     const { data, error } = await supabase
       .from('courses')
       .select('*')
-      .order('rating', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(limit)
     
     if (error) throw error
@@ -650,19 +612,13 @@ export const coursesApi = {
       data.map(async (course): Promise<CourseWithImage> => {
         const imageUrl = await getImageUrlWithFallback('images', 'courses', course.id)
         
-        // Get instructor avatar using the improved function
-        const instructorId = extractPersonId(course.instructor, course.instructor_avatar)
-        const instructorAvatarUrl = await getAvatarUrlWithFallback(instructorId)
-        
         return {
           ...course,
           image: imageUrl,
-          instructorAvatar: instructorAvatarUrl,
           fullDescription: course.full_description,
           joinLink: course.join_link,
           startDate: course.start_date,
-          whatYouWillLearn: course.what_you_will_learn,
-          enrolledStudents: course.enrolled_students
+          whatYouWillLearn: course.what_you_will_learn
         }
       })
     )
@@ -670,13 +626,13 @@ export const coursesApi = {
     return coursesWithImages
   },
 
-  // Get most popular courses (by enrollment)
-  async getMostPopular(limit: number = 10): Promise<CourseWithImage[]> {
+  // Get courses by instructor
+  async getByInstructor(instructor: string): Promise<CourseWithImage[]> {
     const { data, error } = await supabase
       .from('courses')
       .select('*')
-      .order('enrolled_students', { ascending: false })
-      .limit(limit)
+      .eq('instructor', instructor)
+      .order('created_at', { ascending: false })
     
     if (error) throw error
     
@@ -684,19 +640,13 @@ export const coursesApi = {
       data.map(async (course): Promise<CourseWithImage> => {
         const imageUrl = await getImageUrlWithFallback('images', 'courses', course.id)
         
-        // Get instructor avatar using the improved function
-        const instructorId = extractPersonId(course.instructor, course.instructor_avatar)
-        const instructorAvatarUrl = await getAvatarUrlWithFallback(instructorId)
-        
         return {
           ...course,
           image: imageUrl,
-          instructorAvatar: instructorAvatarUrl,
           fullDescription: course.full_description,
           joinLink: course.join_link,
           startDate: course.start_date,
-          whatYouWillLearn: course.what_you_will_learn,
-          enrolledStudents: course.enrolled_students
+          whatYouWillLearn: course.what_you_will_learn
         }
       })
     )
@@ -721,9 +671,8 @@ export const searchApi = {
       data.map(async (project): Promise<ProjectWithImage> => {
         const imageUrl = await getImageUrlWithFallback('images', 'projects', project.id)
         
-        // Get author avatar using the improved function
-        const authorId = extractPersonId(project.author, project.author_avatar)
-        const authorAvatarUrl = await getAvatarUrlWithFallback(authorId)
+        // Get author avatar using the project ID with _avatar suffix
+        const authorAvatarUrl = await getAvatarUrlWithFallback(project.id)
         
         return {
           ...project,
@@ -754,19 +703,13 @@ export const searchApi = {
       data.map(async (course): Promise<CourseWithImage> => {
         const imageUrl = await getImageUrlWithFallback('images', 'courses', course.id)
         
-        // Get instructor avatar using the improved function
-        const instructorId = extractPersonId(course.instructor, course.instructor_avatar)
-        const instructorAvatarUrl = await getAvatarUrlWithFallback(instructorId)
-        
         return {
           ...course,
           image: imageUrl,
-          instructorAvatar: instructorAvatarUrl,
           fullDescription: course.full_description,
           joinLink: course.join_link,
           startDate: course.start_date,
-          whatYouWillLearn: course.what_you_will_learn,
-          enrolledStudents: course.enrolled_students
+          whatYouWillLearn: course.what_you_will_learn
         }
       })
     )
