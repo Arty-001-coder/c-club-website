@@ -19,6 +19,11 @@ export default function HomePage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [eventDisplayTimer, setEventDisplayTimer] = useState<NodeJS.Timeout | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Merchandise typewriter effect states
+  const [merchandiseText, setMerchandiseText] = useState('');
+  const [merchandiseCharIndex, setMerchandiseCharIndex] = useState(0);
+  const [showMerchandiseTyping, setShowMerchandiseTyping] = useState(false);
 
   // Check if mobile view
   useEffect(() => {
@@ -39,6 +44,8 @@ export default function HomePage() {
     '> >>> import innovation',
     '> >>> innovation.transform_future'
   ];
+
+  const merchandiseFullText = "Explore our Merchandise";
 
   const upcomingEvents = [
     {
@@ -64,7 +71,30 @@ export default function HomePage() {
   // Initial page load animation
   useEffect(() => {
     setShowMainContent(true);
+    // Start merchandise typewriter effect after a delay
+    const merchandiseTimer = setTimeout(() => {
+      setShowMerchandiseTyping(true);
+    }, 2000);
+    return () => clearTimeout(merchandiseTimer);
   }, []);
+
+  // Merchandise typewriter effect
+  useEffect(() => {
+    if (showMerchandiseTyping && merchandiseCharIndex < merchandiseFullText.length) {
+      const timer = setTimeout(() => {
+        setMerchandiseText(prev => prev + merchandiseFullText[merchandiseCharIndex]);
+        setMerchandiseCharIndex(prev => prev + 1);
+      }, 80);
+      return () => clearTimeout(timer);
+    } else if (showMerchandiseTyping && merchandiseCharIndex >= merchandiseFullText.length) {
+      // Text is complete, wait 5 seconds then restart
+      const restartTimer = setTimeout(() => {
+        setMerchandiseText('');
+        setMerchandiseCharIndex(0);
+      }, 5000);
+      return () => clearTimeout(restartTimer);
+    }
+  }, [showMerchandiseTyping, merchandiseCharIndex, merchandiseFullText]);
 
   // Initial typewriter effect for code lines
   useEffect(() => {
@@ -344,6 +374,24 @@ export default function HomePage() {
                   {tag}
                 </span>
               ))}
+            </div>
+
+            {/* Merchandise Typewriter Text */}
+            <div className={`text-left ${isMobile ? 'pt-4' : 'pt-6'}`} style={{ marginLeft: '80px' }}>
+              <button 
+                onClick={() => window.location.href = '/merch'}
+                className={`${isMobile ? 'text-lg' : 'text-xl'} text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400 font-semibold min-h-[1.5em] flex items-center justify-start hover:scale-105 transition-transform duration-300 cursor-pointer group hover:underline decoration-yellow-400/70 underline-offset-4`}
+              >
+                <span>
+                  {merchandiseText}
+                  {showMerchandiseTyping && merchandiseCharIndex < merchandiseFullText.length && (
+                    <span className="animate-pulse text-orange-400">|</span>
+                  )}
+                </span>
+                {merchandiseCharIndex >= merchandiseFullText.length && (
+                  <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300 text-orange-400">→</span>
+                )}
+              </button>
             </div>
 
             {/* Action Buttons */}
