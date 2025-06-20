@@ -160,83 +160,81 @@ export default function DashboardLayout({ children }: Props) {
     },
   ];
 
-  // Desktop Layout
-  if (!isMobile) {
-    return (
-      <div className="h-screen flex flex-col overflow-hidden relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url("/back.png")' }}>
-        {/* Background overlay for better contrast */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/70 to-black/80 backdrop-blur-sm -z-10"></div>
-        
-        {/* Animated background elements */}
-        <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-tl from-blue-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '4s' }} />
+  // Unified Layout for both Desktop and Mobile
+  return (
+    <div className="h-screen flex flex-col overflow-hidden relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url("/back.png")' }}>
+      {/* Background overlay for better contrast */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/70 to-black/80 backdrop-blur-sm -z-10"></div>
+      
+      {/* Animated background elements */}
+      <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" />
+      <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-tl from-blue-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '4s' }} />
 
-        {/* Top Navbar */}
-        <nav className="mt-4 h-14 w-full flex items-center justify-center px-4 relative flex-shrink-0 z-10">
-          <div className="flex items-center space-x-4 w-5/6 max-w-6xl">
-            {/* Logo Container - Separate from navbar */}
-            <div className="flex-shrink-0">
-              <button
-                onClick={toggleLogo}
-                className={`
-                  bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
-                  text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
-                  ${logoExpanded 
-                    ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
-                    : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
-                  }
-                  group flex items-center space-x-2 relative
-                `}
-              >
-                <span className={`
-                  text-xs font-medium transition-all duration-300 ease-out
-                  ${logoExpanded ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
-                `}>
-                  Coding Club
-                </span>
-                
-                {/* Active state indicator for logo */}
-                {logoExpanded && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
-                )}
-              </button>
-            </div>
+      {/* Top Navbar - Same for both desktop and mobile */}
+      <nav className="mt-4 h-14 w-full flex items-center justify-center px-4 relative flex-shrink-0 z-10">
+        <div className={`flex items-center space-x-2 lg:space-x-4 ${isMobile ? 'w-full max-w-sm' : 'w-5/6 max-w-6xl'}`}>
+          {/* Logo Container - C² for mobile, Coding Club for desktop */}
+          <div className="flex-shrink-0">
+            <button
+              onClick={toggleLogo}
+              className={`
+                bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
+                text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
+                ${logoExpanded 
+                  ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
+                  : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
+                }
+                group flex items-center space-x-2 relative
+              `}
+            >
+              <span className={`
+                ${isMobile ? 'text-sm font-bold' : 'text-xs font-medium'} transition-all duration-300 ease-out
+                ${logoExpanded ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
+              `}>
+                {isMobile ? 'C²' : 'Coding Club'}
+              </span>
+              
+              {/* Active state indicator for logo */}
+              {logoExpanded && (
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
+              )}
+            </button>
+          </div>
 
-            {/* Main Navigation - Frosted glass container */}
-            <div className="bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-6 py-2 shadow-2xl flex-1 transition-all duration-500 ease-out">
-              <div className="flex items-center justify-center relative">
-                
-                {/* Logo details overlay - appears when logo is expanded */}
-                <div className={`
-                  absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out
-                  ${logoExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
-                `}>
-                  <div className="flex items-center space-x-6 w-full max-w-2xl">
-                    {/* Club Logo and Name */}
-                    <div className="flex items-center space-x-3">
-                      {/* Replace with actual logo image */}
-                      <div className="w-10 h-10 rounded-4xl  shadow-lg shadow-purple-500/50 overflow-hidden bg-gradient-to-br items-center justify-center">
-                        <Image 
-                          src="/logo.png" 
-                          alt="CCIT Logo" 
-                          width={40}
-                          height={40}
-                          className="object-cover w-full h-full"
-                          onError={() => {
-                            // Image will be hidden and fallback gradient background will show
-                            console.log('Logo image failed to load, showing fallback');
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-sm text-white bg-clip-text">
-                          CCIT
-                        </h3>
-                      </div>
+          {/* Main Navigation - Responsive container */}
+          <div className={`bg-black/20 backdrop-blur-lg border border-white/20 rounded-full ${isMobile ? 'px-3 py-2' : 'px-6 py-2'} shadow-2xl flex-1 transition-all duration-500 ease-out`}>
+            <div className="flex items-center justify-center relative">
+              
+              {/* Logo details overlay - appears when logo is expanded */}
+              <div className={`
+                absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out
+                ${logoExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
+              `}>
+                <div className={`flex items-center ${isMobile ? 'space-x-3' : 'space-x-6'} w-full ${isMobile ? 'max-w-xs' : 'max-w-2xl'}`}>
+                  {/* Club Logo and Name */}
+                  <div className="flex items-center space-x-3">
+                    <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full shadow-lg shadow-purple-500/50 overflow-hidden bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center`}>
+                      <Image 
+                        src="/logo.png" 
+                        alt="CCIT Logo" 
+                        width={isMobile ? 32 : 40}
+                        height={isMobile ? 32 : 40}
+                        className="object-cover w-full h-full"
+                        onError={() => {
+                          console.log('Logo image failed to load, showing fallback');
+                        }}
+                      />
                     </div>
+                    <div>
+                      <h3 className={`font-semibold ${isMobile ? 'text-xs' : 'text-sm'} text-white bg-clip-text`}>
+                        CCIT
+                      </h3>
+                    </div>
+                  </div>
 
-                    {/* Social Links */}
+                  {/* Social Links - Hidden on mobile in expanded view, shown only on desktop */}
+                  {!isMobile && (
                     <div className="flex items-center space-x-3">
                       {socialLinks.map((social) => {
                         const IconComponent = social.icon;
@@ -261,271 +259,135 @@ export default function DashboardLayout({ children }: Props) {
                         IISER TRIVANDRUM
                       </span>
                     </div>
+                  )}
 
-          
-                  </div>
+                  {/* Mobile: Show IISER TVM text instead of social links */}
+                  {isMobile && (
+                    <div className="text-center">
+                      <span className="text-xs font-semibold text-white bg-clip-text">
+                        IISER TRIVANDRUM
+                      </span>
+                    </div>
+                  )}
                 </div>
+              </div>
 
-                {/* Search bar overlay - appears when search is expanded */}
-                <div className={`
-                  absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out
-                  ${searchExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
-                `}>
-                  <form onSubmit={handleSearchSubmit} className="flex items-center space-x-3 w-full max-w-md">
-                    <Search size={20} className="text-white" />
-                    <input
-                      type="text"
-                      placeholder="Search anything..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="bg-transparent text-white placeholder-gray-300 outline-none flex-1 text-sm"
-                      autoFocus={searchExpanded}
-                    />
+              {/* Search bar overlay - appears when search is expanded */}
+              <div className={`
+                absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out
+                ${searchExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
+              `}>
+                <form onSubmit={handleSearchSubmit} className={`flex items-center space-x-3 w-full ${isMobile ? 'max-w-xs' : 'max-w-md'}`}>
+                  <Search size={isMobile ? 18 : 20} className="text-white" />
+                  <input
+                    type="text"
+                    placeholder="Search anything..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="bg-transparent text-white placeholder-gray-300 outline-none flex-1 text-sm"
+                    autoFocus={searchExpanded}
+                  />
+                  <button
+                    type="button"
+                    onClick={closeSearch}
+                    className="text-white hover:text-gray-300 transition-colors duration-200 p-1 hover:bg-white/10 rounded-full ml-2"
+                  >
+                    ✕
+                  </button>
+                </form>
+              </div>
+
+              {/* Navigation buttons - Icons only for mobile, icons + text for desktop */}
+              <div className={`
+                flex items-center ${isMobile ? 'space-x-1' : 'space-x-1'} transition-all duration-500 ease-out
+                ${(searchExpanded || logoExpanded) ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}
+              `}>
+                {navItems.map((item, index) => {
+                  const Icon = item.icon;
+                  const isActive = activeButton === item.id;
+                  
+                  return (
                     <button
-                      type="button"
-                      onClick={closeSearch}
-                      className="text-white hover:text-gray-300 transition-colors duration-200 p-1 hover:bg-white/10 rounded-full ml-2"
+                      key={item.id}
+                      className={`
+                        relative text-white ${isMobile ? 'px-2 py-2' : 'px-4 py-2'} rounded-full transition-all duration-300 ease-out
+                        transform hover:scale-110 hover:-translate-y-0.5
+                        ${isActive 
+                          ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border border-purple-400/50 backdrop-blur-sm' 
+                          : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
+                        }
+                        ${isTransitioning ? 'pointer-events-none' : ''}
+                        group flex items-center ${isMobile ? '' : 'space-x-2'}
+                      `}
+                      style={{
+                        animationDelay: `${index * 50}ms`,
+                      }}
+                      onClick={() => goTo(item.path, item.id)}
+                      title={isMobile ? item.label : undefined}
                     >
-                      ✕
-                    </button>
-                  </form>
-                </div>
-
-                {/* Navigation buttons */}
-                <div className={`
-                  flex items-center space-x-1 transition-all duration-500 ease-out
-                  ${(searchExpanded || logoExpanded) ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}
-                `}>
-                  {navItems.map((item, index) => {
-                    const Icon = item.icon;
-                    const isActive = activeButton === item.id;
-                    
-                    return (
-                      <button
-                        key={item.id}
+                      <Icon 
+                        size={isMobile ? 16 : 18} 
                         className={`
-                          relative text-white px-4 py-2 rounded-full transition-all duration-300 ease-out
-                          transform hover:scale-110 hover:-translate-y-0.5
-                          ${isActive 
-                            ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border border-purple-400/50 backdrop-blur-sm' 
-                            : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
-                          }
-                          ${isTransitioning ? 'pointer-events-none' : ''}
-                          group flex items-center space-x-2
+                          transition-all duration-300 ease-out
+                          ${isActive ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
                         `}
-                        style={{
-                          animationDelay: `${index * 50}ms`,
-                        }}
-                        onClick={() => goTo(item.path, item.id)}
-                      >
-                        <Icon 
-                          size={18} 
-                          className={`
-                            transition-all duration-300 ease-out
-                            ${isActive ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
-                          `}
-                        />
-                        
-                        {/* Label text beside icon */}
+                      />
+                      
+                      {/* Label text - only show on desktop */}
+                      {!isMobile && (
                         <span className={`
                           text-xs font-medium transition-all duration-300 ease-out
                           ${isActive ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
                         `}>
                           {item.label}
                         </span>
+                      )}
 
-                        {/* Active state indicator - enhanced */}
-                        {isActive && (
-                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+                      {/* Active state indicator */}
+                      {isActive && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
+          </div>
 
-            {/* Separate Search Button */}
-            <div className="flex-shrink-0">
-              <button
-                onClick={toggleSearch}
+          {/* Search Button */}
+          <div className="flex-shrink-0">
+            <button
+              onClick={toggleSearch}
+              className={`
+                bg-black/20 backdrop-blur-lg border border-white/20 rounded-full ${isMobile ? 'px-3 py-2' : 'px-4 py-2'} shadow-2xl
+                text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
+                ${searchExpanded 
+                  ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
+                  : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
+                }
+                group flex items-center ${isMobile ? '' : 'space-x-2'} relative
+              `}
+            >
+              <Search 
+                size={isMobile ? 16 : 18} 
                 className={`
-                  bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
-                  text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
-                  ${searchExpanded 
-                    ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
-                    : 'hover:bg-white/20 hover:backdrop-blur-sm hover:shadow-lg hover:shadow-white/10'
-                  }
-                  group flex items-center space-x-2 relative
+                  transition-all duration-300 ease-out
+                  ${searchExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
                 `}
-              >
-                <Search 
-                  size={18} 
-                  className={`
-                    transition-all duration-300 ease-out
-                    ${searchExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
-                  `}
-                />
+              />
+              {/* Search label - only show on desktop */}
+              {!isMobile && (
                 <span className={`
                   text-xs font-medium transition-all duration-300 ease-out
                   ${searchExpanded ? 'text-white drop-shadow-lg font-semibold' : 'text-gray-300 group-hover:text-white'}
                 `}>
                   Search
                 </span>
-                
-                {/* Active state indicator for search */}
-                {searchExpanded && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
-                )}
-              </button>
-            </div>
-          </div>
-        </nav>
-
-        {/* Main Content */}
-        <main className="flex-1 p-6 relative min-h-0 z-10">
-          {/* Content wrapper with transition */}
-          <div 
-            className={`
-               rounded-3xl shadow-2xl w-full h-full relative
-              transition-all duration-300 ease-out
-              ${isTransitioning ? 'opacity-95 scale-[0.998]' : 'opacity-100 scale-100'}
-            `}
-          >
-            {/* Animated background gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-50/20 via-transparent to-blue-50/20 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
-            
-            {/* Loading overlay during transitions */}
-            {isTransitioning && (
-              <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-10 flex items-center justify-center rounded-3xl">
-                <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
-              </div>
-            )}
-            
-            {/* Scrollable Content */}
-            <div 
-              className={`
-                h-full overflow-y-auto overflow-x-hidden transition-all duration-200 ease-out rounded-3xl
-                ${isTransitioning ? 'opacity-70 blur-sm' : 'opacity-100 blur-0'}
-              `}
-            >
-              {children}
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  // Mobile Layout with Side Navigation
-  return (
-    <div className="h-screen flex overflow-hidden relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url("/back.png")' }}>
-      {/* Background overlay for better contrast */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/70 to-black/80 backdrop-blur-sm -z-10"></div>
-      
-      {/* Animated background elements */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" />
-      <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-tl from-blue-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '2s' }} />
-      <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '4s' }} />
-
-      {/* Side Navigation - Reduced width and padding */}
-      <nav className="w-20 flex-shrink-0 flex flex-col p-3 z-10">
-        <div className="flex flex-col h-full justify-between">
-          
-          {/* Search Button at Top */}
-          <div className="flex justify-center">
-            <button
-              onClick={toggleSearch}
-              className={`
-                w-14 h-14 rounded-2xl transition-all duration-300 ease-out transform hover:scale-110
-                ${searchExpanded 
-                  ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25' 
-                  : 'bg-black/20 hover:bg-white/20 backdrop-blur-lg border border-white/20'
-                }
-                group flex items-center justify-center relative
-              `}
-            >
-              <Search 
-                size={22} 
-                className={`
-                  transition-all duration-300 ease-out
-                  ${searchExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
-                `}
-              />
+              )}
               
               {/* Active state indicator for search */}
               {searchExpanded && (
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl animate-pulse" />
-              )}
-            </button>
-          </div>
-
-          {/* Navigation Items - Centered and Evenly Spaced */}
-          <div className="flex-1 flex flex-col justify-center space-y-4 py-4">
-            {navItems.map((item, index) => {
-              const Icon = item.icon;
-              const isActive = activeButton === item.id;
-              
-              return (
-                <div key={item.id} className="flex justify-center">
-                  <button
-                    className={`
-                      relative w-14 h-14 rounded-2xl transition-all duration-300 ease-out
-                      transform hover:scale-110
-                      ${isActive 
-                        ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25' 
-                        : 'bg-black/20 hover:bg-white/20 backdrop-blur-lg border border-white/20'
-                      }
-                      ${isTransitioning ? 'pointer-events-none' : ''}
-                      group flex items-center justify-center
-                    `}
-                    style={{
-                      animationDelay: `${index * 50}ms`,
-                    }}
-                    onClick={() => goTo(item.path, item.id)}
-                    title={item.label}
-                  >
-                    <Icon 
-                      size={22} 
-                      className={`
-                        transition-all duration-300 ease-out
-                        ${isActive ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
-                      `}
-                    />
-
-                    {/* Active state indicator */}
-                    {isActive && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl animate-pulse" />
-                    )}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Coding Club Button at Bottom */}
-          <div className="flex justify-center">
-            <button
-              onClick={toggleLogo}
-              className={`
-                w-14 h-14 rounded-2xl transition-all duration-300 ease-out transform hover:scale-110
-                ${logoExpanded 
-                  ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25' 
-                  : 'bg-black/20 hover:bg-white/20 backdrop-blur-lg border border-white/20'
-                }
-                group flex items-center justify-center relative
-              `}
-            >
-              <span className={`
-                text-base font-bold transition-all duration-300 ease-out
-                ${logoExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white'}
-              `}>
-                C²
-              </span>
-              
-              {/* Active state indicator for logo */}
-              {logoExpanded && (
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
               )}
             </button>
           </div>
@@ -533,7 +395,7 @@ export default function DashboardLayout({ children }: Props) {
       </nav>
 
       {/* Search Overlay for Mobile */}
-      {searchExpanded && (
+      {searchExpanded && isMobile && (
         <div className="absolute inset-0 bg-black/60 backdrop-blur-lg z-50 flex items-start justify-center pt-20">
           <div className="bg-black/40 backdrop-blur-lg border border-white/20 rounded-2xl p-6 mx-4 w-full max-w-md">
             <form onSubmit={handleSearchSubmit} className="flex items-center space-x-3">
@@ -559,7 +421,7 @@ export default function DashboardLayout({ children }: Props) {
       )}
 
       {/* Logo Details Overlay for Mobile */}
-      {logoExpanded && (
+      {logoExpanded && isMobile && (
         <div className="absolute inset-0 bg-black/60 backdrop-blur-lg z-50 flex items-center justify-center p-4">
           <div className="bg-black/40 backdrop-blur-lg border border-white/20 rounded-2xl p-6 mx-4 w-full max-w-md">
             <div className="text-center space-y-4">
@@ -625,8 +487,8 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       )}
 
-      {/* Main Content - Reduced gap significantly */}
-      <main className="flex-1 p-2 relative min-h-0 z-10 ml-1">
+      {/* Main Content - Full width and height */}
+      <main className="flex-1 p-4 lg:p-6 relative min-h-0 z-10">
         {/* Content wrapper with transition */}
         <div 
           className={`
