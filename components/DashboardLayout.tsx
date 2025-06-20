@@ -179,7 +179,7 @@ export default function DashboardLayout({ children }: Props) {
             <button
               onClick={toggleLogo}
               className={`
-                bg-black/20 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
+                bg-black/40 backdrop-blur-lg border border-white/20 rounded-full px-4 py-2 shadow-2xl
                 text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
                 ${logoExpanded 
                   ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
@@ -203,7 +203,7 @@ export default function DashboardLayout({ children }: Props) {
           </div>
 
           {/* Main Navigation - Responsive container */}
-          <div className={`bg-black/20 backdrop-blur-lg border border-white/20 rounded-full ${isMobile ? 'px-3 py-2' : 'px-6 py-2'} shadow-2xl flex-1 transition-all duration-500 ease-out`}>
+          <div className={`bg-black/40 backdrop-blur-lg rounded-full ${isMobile ? 'px-3 py-2' : 'px-6 py-2'} shadow-2xl flex-1 transition-all duration-500 ease-out`}>
             <div className="flex items-center justify-center relative">
               
               {/* Logo details overlay - appears when logo is expanded */}
@@ -359,7 +359,7 @@ export default function DashboardLayout({ children }: Props) {
             <button
               onClick={toggleSearch}
               className={`
-                bg-black/20 backdrop-blur-lg border border-white/20 rounded-full ${isMobile ? 'px-3 py-2' : 'px-4 py-2'} shadow-2xl
+                bg-black/40 backdrop-blur-lg border border-white/20 rounded-full ${isMobile ? 'px-3 py-2' : 'px-4 py-2'} shadow-2xl
                 text-white transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5
                 ${searchExpanded 
                   ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25 border-purple-400/50' 
@@ -394,31 +394,7 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </nav>
 
-      {/* Search Overlay for Mobile */}
-      {searchExpanded && isMobile && (
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-lg z-50 flex items-start justify-center pt-20">
-          <div className="bg-black/40 backdrop-blur-lg border border-white/20 rounded-2xl p-6 mx-4 w-full max-w-md">
-            <form onSubmit={handleSearchSubmit} className="flex items-center space-x-3">
-              <Search size={20} className="text-white" />
-              <input
-                type="text"
-                placeholder="Search anything..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent text-white placeholder-gray-300 outline-none flex-1 text-sm"
-                autoFocus={searchExpanded}
-              />
-              <button
-                type="button"
-                onClick={closeSearch}
-                className="text-white hover:text-gray-300 transition-colors duration-200 p-1 hover:bg-white/10 rounded-full ml-2"
-              >
-                ✕
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+
 
       {/* Logo Details Overlay for Mobile */}
       {logoExpanded && isMobile && (
