@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef} from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { 
   Plus, 
@@ -11,7 +11,10 @@ import {
   BookOpen,
   Code,
   Trash2,
-  FileImage
+  FileImage,
+  Lock,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
@@ -28,7 +31,7 @@ interface ProjectFormData {
   techStack: string[];
   features: string[];
   status: 'Completed' | 'In Progress' | 'Planned';
-  date: string; // Added date field
+  date: string;
 }
 
 interface CourseFormData {
@@ -47,6 +50,13 @@ interface CourseFormData {
 }
 
 export default function AdminDataEntryPage() {
+  // Password protection state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [isCheckingPassword, setIsCheckingPassword] = useState(false);
+
   const [activeTab, setActiveTab] = useState<'projects' | 'courses'>('projects');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -63,7 +73,6 @@ export default function AdminDataEntryPage() {
   const [courseImagePreview, setCourseImagePreview] = useState<string | null>(null);
   const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
   const [courseImageFile, setCourseImageFile] = useState<File | null>(null);
-  // Author avatar states
   const [authorAvatarPreview, setAuthorAvatarPreview] = useState<string | null>(null);
   const [authorAvatarFile, setAuthorAvatarFile] = useState<File | null>(null);
 
@@ -80,7 +89,7 @@ export default function AdminDataEntryPage() {
     techStack: [],
     features: [],
     status: 'In Progress',
-    date: new Date().toISOString().split('T')[0] // Default to today's date
+    date: new Date().toISOString().split('T')[0]
   });
 
   // Course form state
@@ -107,6 +116,101 @@ export default function AdminDataEntryPage() {
   const [newTechStack, setNewTechStack] = useState('');
   const [newFeature, setNewFeature] = useState('');
 
+  // Password validation
+  const ADMIN_PASSWORD = 'CoderBuddy001';
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCheckingPassword(true);
+    setPasswordError('');
+
+    setTimeout(() => {
+      if (password === ADMIN_PASSWORD) {
+        setIsAuthenticated(true);
+        setPassword('');
+      } else {
+        setPasswordError('Incorrect password. Please try again.');
+        setPassword('');
+      }
+      setIsCheckingPassword(false);
+    }, 500);
+  };
+
+  // If not authenticated, show password prompt
+  if (!isAuthenticated) {
+    return (
+      <DashboardLayout>
+        <div className="min-h-screen flex items-center justify-center px-8">
+          <div className="bg-black/30 backdrop-blur-lg border border-white/20 rounded-2xl p-8 w-full max-w-md">
+            <div className="text-center mb-8">
+              <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <Lock size={32} className="text-purple-400" />
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-2">Admin Access Required</h1>
+              <p className="text-gray-400">
+                Please enter the admin password to continue
+              </p>
+            </div>
+
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div className="relative">
+                <label className="block text-white font-medium mb-2">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 transition-colors"
+                    placeholder="Enter admin password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+              </div>
+
+              {passwordError && (
+                <div className="bg-red-600/20 border border-red-400/30 rounded-lg p-3 flex items-center space-x-3">
+                  <AlertCircle size={16} className="text-red-400" />
+                  <span className="text-red-400 text-sm">{passwordError}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isCheckingPassword || !password.trim()}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2"
+              >
+                {isCheckingPassword ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Verifying...</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock size={18} />
+                    <span>Access Admin Panel</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-500 text-xs">
+                Protected area - authorized personnel only
+              </p>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   // Helper functions for managing arrays
   const addToArray = (array: string[], newItem: string, setter: (items: string[]) => void) => {
     if (newItem.trim() && !array.includes(newItem.trim())) {
@@ -123,7 +227,6 @@ export default function AdminDataEntryPage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       setSubmitStatus('error');
@@ -132,7 +235,6 @@ export default function AdminDataEntryPage() {
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       setSubmitStatus('error');
       setSubmitMessage('Image size must be less than 5MB');
@@ -140,7 +242,6 @@ export default function AdminDataEntryPage() {
       return;
     }
 
-    // Create preview URL
     const previewUrl = URL.createObjectURL(file);
 
     if (type === 'projects') {
@@ -207,7 +308,6 @@ export default function AdminDataEntryPage() {
         throw uploadError;
       }
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('images')
         .getPublicUrl(filePath);
@@ -221,7 +321,7 @@ export default function AdminDataEntryPage() {
     }
   };
 
-  // Upload avatar to Supabase storage (root of images bucket)
+  // Upload avatar to Supabase storage
   const uploadAvatarToSupabase = async (file: File, projectId: string) => {
     setIsUploadingImage(true);
     
@@ -240,7 +340,6 @@ export default function AdminDataEntryPage() {
         throw uploadError;
       }
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('images')
         .getPublicUrl(fileName);
@@ -261,7 +360,6 @@ export default function AdminDataEntryPage() {
     setSubmitStatus('idle');
 
     try {
-      // Insert project data first to get the UUID
       const { data: projectData, error: projectError } = await supabase
         .from('projects')
         .insert([
@@ -291,12 +389,10 @@ export default function AdminDataEntryPage() {
 
       const projectId = projectData.id;
 
-      // Upload project image if provided
       if (projectImageFile && projectId) {
         await uploadImageToSupabase(projectImageFile, projectId, 'projects');
       }
 
-      // Upload author avatar if provided
       if (authorAvatarFile && projectId) {
         await uploadAvatarToSupabase(authorAvatarFile, projectId);
       }
@@ -304,7 +400,6 @@ export default function AdminDataEntryPage() {
       setSubmitStatus('success');
       setSubmitMessage('Project added successfully!');
       
-      // Reset form
       setProjectForm({
         title: '',
         description: '',
@@ -320,7 +415,6 @@ export default function AdminDataEntryPage() {
         date: new Date().toISOString().split('T')[0]
       });
       
-      // Reset image
       removeImagePreview('projects');
       removeImagePreview('avatar');
       
@@ -341,7 +435,6 @@ export default function AdminDataEntryPage() {
     setSubmitStatus('idle');
 
     try {
-      // Insert course data first to get the UUID
       const { data: courseData, error: courseError } = await supabase
         .from('courses')
         .insert([
@@ -369,7 +462,6 @@ export default function AdminDataEntryPage() {
 
       const courseId = courseData.id;
 
-      // Upload course image if provided
       if (courseImageFile && courseId) {
         await uploadImageToSupabase(courseImageFile, courseId, 'courses');
       }
@@ -377,7 +469,6 @@ export default function AdminDataEntryPage() {
       setSubmitStatus('success');
       setSubmitMessage('Course added successfully!');
       
-      // Reset form
       setCourseForm({
         title: '',
         description: '',
@@ -393,7 +484,6 @@ export default function AdminDataEntryPage() {
         startDate: ''
       });
       
-      // Reset image
       removeImagePreview('courses');
       
     } catch (submitError) {
@@ -437,9 +527,7 @@ export default function AdminDataEntryPage() {
             />
             <div className="flex-1">
               <p className="text-white font-medium">Image selected</p>
-              <p className="text-gray-400 text-sm">
-                Ready to upload
-              </p>
+              <p className="text-gray-400 text-sm">Ready to upload</p>
             </div>
             <button
               type="button"
@@ -463,12 +551,8 @@ export default function AdminDataEntryPage() {
               <p className="text-white font-medium mb-2">
                 Upload {type === 'projects' ? 'project image' : type === 'courses' ? 'course image' : 'author avatar'}
               </p>
-              <p className="text-gray-400 text-sm">
-                Click to browse or drag and drop
-              </p>
-              <p className="text-gray-500 text-xs mt-1">
-                JPEG, PNG, WebP up to 5MB
-              </p>
+              <p className="text-gray-400 text-sm">Click to browse or drag and drop</p>
+              <p className="text-gray-500 text-xs mt-1">JPEG, PNG, WebP up to 5MB</p>
             </div>
           </div>
           <input

@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
-import { ExternalLink, X, Github, Globe, Play, Clock, BookOpen, Loader2, ChevronLeft } from 'lucide-react';
+import { ExternalLink, X, Github, Globe, Play, Clock, BookOpen, Loader2, ChevronLeft, Plus } from 'lucide-react';
 import { projectsApi, coursesApi, ProjectWithImage, CourseWithImage } from '@/lib/supabase';
 
 export default function ProjectsCoursesPage() {
+  const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<(ProjectWithImage | CourseWithImage) | null>(null);
   const [selectedType, setSelectedType] = useState<'project' | 'course' | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -62,6 +64,10 @@ export default function ProjectsCoursesPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const navigateToAdmin = () => {
+    router.push('/admin');
   };
 
   if (!isClient) {
@@ -643,6 +649,24 @@ export default function ProjectsCoursesPage() {
             </div>
           )}
         </div>
+
+        {/* Admin Button - Only show when not in detail view */}
+        {!selectedItem && (
+          <div className={`flex justify-center pb-8 transition-all duration-1000 delay-800 ${
+            isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
+            <button
+              onClick={navigateToAdmin}
+              className="group bg-gradient-to-r from-purple-600/20 to-blue-600/20 hover:from-purple-600/40 hover:to-blue-600/40 border-2 border-purple-400/30 hover:border-purple-400/60 backdrop-blur-lg rounded-full p-4 transition-all duration-300 transform hover:scale-110 hover:shadow-xl hover:shadow-purple-500/20"
+              aria-label="Add new project or course"
+            >
+              <Plus 
+                size={24} 
+                className="text-purple-400 group-hover:text-white transition-colors duration-300" 
+              />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Custom Scrollbar Styles - Hidden on mobile */}
