@@ -428,8 +428,8 @@ export default function DashboardLayout({ children }: Props) {
       <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-tl from-blue-500/10 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '2s' }} />
       <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-xl -z-20 animate-pulse" style={{ animationDelay: '4s' }} />
 
-      {/* Side Navigation */}
-      <nav className="w-24 flex-shrink-0 flex flex-col p-6 z-10">
+      {/* Side Navigation - Reduced width and padding */}
+      <nav className="w-20 flex-shrink-0 flex flex-col p-3 z-10">
         <div className="flex flex-col h-full justify-between">
           
           {/* Search Button at Top */}
@@ -437,7 +437,7 @@ export default function DashboardLayout({ children }: Props) {
             <button
               onClick={toggleSearch}
               className={`
-                w-16 h-16 rounded-2xl transition-all duration-300 ease-out transform hover:scale-110
+                w-14 h-14 rounded-2xl transition-all duration-300 ease-out transform hover:scale-110
                 ${searchExpanded 
                   ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25' 
                   : 'bg-black/20 hover:bg-white/20 backdrop-blur-lg border border-white/20'
@@ -446,7 +446,7 @@ export default function DashboardLayout({ children }: Props) {
               `}
             >
               <Search 
-                size={24} 
+                size={22} 
                 className={`
                   transition-all duration-300 ease-out
                   ${searchExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
@@ -461,7 +461,7 @@ export default function DashboardLayout({ children }: Props) {
           </div>
 
           {/* Navigation Items - Centered and Evenly Spaced */}
-          <div className="flex-1 flex flex-col justify-center space-y-6 py-8">
+          <div className="flex-1 flex flex-col justify-center space-y-4 py-6">
             {navItems.map((item, index) => {
               const Icon = item.icon;
               const isActive = activeButton === item.id;
@@ -470,7 +470,7 @@ export default function DashboardLayout({ children }: Props) {
                 <div key={item.id} className="flex justify-center">
                   <button
                     className={`
-                      relative w-16 h-16 rounded-2xl transition-all duration-300 ease-out
+                      relative w-14 h-14 rounded-2xl transition-all duration-300 ease-out
                       transform hover:scale-110
                       ${isActive 
                         ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25' 
@@ -486,7 +486,7 @@ export default function DashboardLayout({ children }: Props) {
                     title={item.label}
                   >
                     <Icon 
-                      size={24} 
+                      size={22} 
                       className={`
                         transition-all duration-300 ease-out
                         ${isActive ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white group-hover:rotate-12'}
@@ -508,7 +508,7 @@ export default function DashboardLayout({ children }: Props) {
             <button
               onClick={toggleLogo}
               className={`
-                w-16 h-16 rounded-2xl transition-all duration-300 ease-out transform hover:scale-110
+                w-14 h-14 rounded-2xl transition-all duration-300 ease-out transform hover:scale-110
                 ${logoExpanded 
                   ? 'bg-gradient-to-r from-purple-600/80 to-blue-600/80 shadow-lg shadow-purple-500/25' 
                   : 'bg-black/20 hover:bg-white/20 backdrop-blur-lg border border-white/20'
@@ -517,7 +517,7 @@ export default function DashboardLayout({ children }: Props) {
               `}
             >
               <span className={`
-                text-lg font-bold transition-all duration-300 ease-out
+                text-base font-bold transition-all duration-300 ease-out
                 ${logoExpanded ? 'text-white drop-shadow-lg' : 'text-gray-300 group-hover:text-white'}
               `}>
                 C²
@@ -625,8 +625,8 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       )}
 
-      {/* Main Content */}
-      <main className="flex-1 p-4 relative min-h-0 z-10 ml-6">
+      {/* Main Content - Reduced gap significantly */}
+      <main className="flex-1 p-2 relative min-h-0 z-10 ml-1">
         {/* Content wrapper with transition */}
         <div 
           className={`
