@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Coding Club of IISER Thiruvananthapuram",
-  description: "Website created by Antrin Maji(B24)",
+  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION,
 };
 
 export default function RootLayout({
