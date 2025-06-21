@@ -25,6 +25,9 @@ export default function HomePage() {
   const [merchandiseCharIndex, setMerchandiseCharIndex] = useState(0);
   const [showMerchandiseTyping, setShowMerchandiseTyping] = useState(false);
 
+  // Google Form URL - Replace this with your actual Google Form URL
+  const GOOGLE_FORM_URL = 'https://forms.google.com/your-form-id-here';
+
   // Check if mobile view
   useEffect(() => {
     const checkMobile = () => {
@@ -201,6 +204,11 @@ export default function HomePage() {
         techSection.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
+  };
+
+  // Handle Join Community button click
+  const handleJoinCommunity = () => {
+    window.open(GOOGLE_FORM_URL, '_blank');
   };
 
   const toggleFaq = (index: number) => {
@@ -396,7 +404,9 @@ export default function HomePage() {
 
             {/* Action Buttons */}
             <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'flex-col sm:flex-row gap-4'}`}>
-              <button className={`group bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white ${isMobile ? 'px-6 py-3' : 'px-8 py-4'} rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center justify-center space-x-2`}>
+              <button 
+                onClick={handleJoinCommunity}
+                className={`group bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white ${isMobile ? 'px-6 py-3' : 'px-8 py-4'} rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center justify-center space-x-2`}>
                 <span>🚀</span>
                 <span className={isMobile ? 'text-sm' : ''}>Join Our Community</span>
               </button>

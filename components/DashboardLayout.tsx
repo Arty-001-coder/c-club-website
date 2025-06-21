@@ -9,6 +9,15 @@ interface Props {
   children: ReactNode;
 }
 
+interface SearchResult {
+  id: string;
+  title: string;
+  description: string;
+  path: string;
+  section: string;
+  keywords: string[];
+}
+
 export default function DashboardLayout({ children }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -16,8 +25,169 @@ export default function DashboardLayout({ children }: Props) {
   const [activeButton, setActiveButton] = useState('');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const [logoExpanded, setLogoExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Comprehensive search database
+  const searchDatabase: SearchResult[] = [
+    // Home/Overview
+    {
+      id: 'home-main',
+      title: 'Home - Coding Club',
+      description: 'Main homepage with club overview, stats, and upcoming events',
+      path: '/',
+      section: 'Home',
+      keywords: ['home', 'overview', 'main', 'coding club', 'iiser', 'stats', 'events', 'community', 'join', 'workshops']
+    },
+    {
+      id: 'home-tech',
+      title: 'Tech Stack',
+      description: 'Technologies we work with - AI, ML, Web Development, Python',
+      path: '/',
+      section: 'Home',
+      keywords: ['tech', 'technology', 'stack', 'ai', 'artificial intelligence', 'machine learning', 'ml', 'python', 'web development', 'react', 'javascript', 'deep learning', 'data science']
+    },
+    {
+      id: 'home-events',
+      title: 'Upcoming Events',
+      description: 'ML Workshop, Web Dev Bootcamp, AI Research Seminar',
+      path: '/',
+      section: 'Home',
+      keywords: ['events', 'workshop', 'bootcamp', 'seminar', 'ml workshop', 'web dev', 'ai research', 'upcoming', 'schedule']
+    },
+    
+    // Alumni
+    {
+      id: 'alumni-main',
+      title: 'Alumni Network',
+      description: 'Connect with our successful alumni working in top tech companies',
+      path: '/alumni',
+      section: 'Alumni',
+      keywords: ['alumni', 'graduates', 'network', 'connections', 'tech companies', 'career', 'mentorship', 'success stories']
+    },
+    {
+      id: 'alumni-companies',
+      title: 'Alumni at Top Companies',
+      description: 'Our alumni working at Google, Microsoft, Amazon, Meta, and other tech giants',
+      path: '/alumni',
+      section: 'Alumni',
+      keywords: ['google', 'microsoft', 'amazon', 'meta', 'facebook', 'apple', 'netflix', 'tech giants', 'companies', 'jobs', 'placement']
+    },
+    
+    // Projects & Courses
+    {
+      id: 'projects-main',
+      title: 'Projects & Courses',
+      description: 'Hands-on projects and structured courses for skill development',
+      path: '/projects',
+      section: 'Projects',
+      keywords: ['projects', 'courses', 'hands-on', 'skill development', 'programming', 'coding', 'learn', 'practice']
+    },
+    {
+      id: 'projects-ml',
+      title: 'Machine Learning Projects',
+      description: 'ML and AI projects including neural networks, NLP, and computer vision',
+      path: '/projects',
+      section: 'Projects',
+      keywords: ['machine learning', 'ml', 'ai', 'neural networks', 'nlp', 'natural language processing', 'computer vision', 'deep learning', 'tensorflow', 'pytorch']
+    },
+    {
+      id: 'projects-web',
+      title: 'Web Development Projects',
+      description: 'Full-stack web applications using React, Node.js, and modern frameworks',
+      path: '/projects',
+      section: 'Projects',
+      keywords: ['web development', 'fullstack', 'react', 'nodejs', 'javascript', 'frontend', 'backend', 'database', 'api', 'responsive']
+    },
+    {
+      id: 'projects-data',
+      title: 'Data Science Projects',
+      description: 'Data analysis, visualization, and statistical modeling projects',
+      path: '/projects',
+      section: 'Projects',
+      keywords: ['data science', 'data analysis', 'visualization', 'statistics', 'pandas', 'numpy', 'matplotlib', 'jupyter', 'datasets']
+    },
+    
+    // Team
+    {
+      id: 'team-main',
+      title: 'Meet Our Team',
+      description: 'Core team members, coordinators, and active contributors',
+      path: '/team',
+      section: 'Team',
+      keywords: ['team', 'members', 'coordinators', 'contributors', 'leadership', 'core team', 'organizers', 'volunteers']
+    },
+    {
+      id: 'team-coordinators',
+      title: 'Club Coordinators',
+      description: 'Leadership team managing club activities and events',
+      path: '/team',
+      section: 'Team',
+      keywords: ['coordinators', 'leadership', 'management', 'organizers', 'leads', 'heads', 'executives']
+    },
+    
+    // Blogs
+    {
+      id: 'blogs-main',
+      title: 'Tech Blogs',
+      description: 'Technical articles, tutorials, and insights from our community',
+      path: '/blogs',
+      section: 'Blogs',
+      keywords: ['blogs', 'articles', 'tutorials', 'technical', 'insights', 'community', 'writing', 'knowledge sharing']
+    },
+    {
+      id: 'blogs-tutorials',
+      title: 'Programming Tutorials',
+      description: 'Step-by-step coding tutorials and how-to guides',
+      path: '/blogs',
+      section: 'Blogs',
+      keywords: ['tutorials', 'how-to', 'guides', 'step-by-step', 'programming', 'coding', 'learning', 'education']
+    },
+    {
+      id: 'blogs-research',
+      title: 'Research Articles',
+      description: 'Latest research in AI, ML, and computer science',
+      path: '/blogs',
+      section: 'Blogs',
+      keywords: ['research', 'papers', 'latest', 'computer science', 'ai research', 'ml research', 'academic', 'science']
+    },
+    
+    // Resources
+    {
+      id: 'resources-main',
+      title: 'Learning Resources',
+      description: 'Curated resources for programming, AI/ML, and tech skills',
+      path: '/resources',
+      section: 'Resources',
+      keywords: ['resources', 'learning', 'curated', 'programming', 'books', 'courses', 'materials', 'study']
+    },
+    {
+      id: 'resources-books',
+      title: 'Recommended Books',
+      description: 'Essential books for programming, algorithms, and computer science',
+      path: '/resources',
+      section: 'Resources',
+      keywords: ['books', 'recommended', 'reading', 'algorithms', 'computer science', 'programming books', 'textbooks']
+    },
+    {
+      id: 'resources-tools',
+      title: 'Development Tools',
+      description: 'IDEs, frameworks, libraries, and development tools',
+      path: '/resources',
+      section: 'Resources',
+      keywords: ['tools', 'development', 'ide', 'frameworks', 'libraries', 'software', 'programming tools', 'github', 'vscode']
+    },
+    {
+      id: 'resources-datasets',
+      title: 'Datasets & APIs',
+      description: 'Public datasets and APIs for projects and research',
+      path: '/resources',
+      section: 'Resources',
+      keywords: ['datasets', 'apis', 'data', 'public datasets', 'research data', 'machine learning datasets', 'kaggle']
+    }
+  ];
 
   // Check if mobile view
   useEffect(() => {
@@ -52,12 +222,34 @@ export default function DashboardLayout({ children }: Props) {
     }
   }, [pathname]);
 
+  // Search functionality
+  useEffect(() => {
+    if (searchQuery.trim().length > 1) {
+      const query = searchQuery.toLowerCase().trim();
+      const results = searchDatabase.filter(item => {
+        return (
+          item.title.toLowerCase().includes(query) ||
+          item.description.toLowerCase().includes(query) ||
+          item.keywords.some(keyword => keyword.toLowerCase().includes(query)) ||
+          item.section.toLowerCase().includes(query)
+        );
+      }).slice(0, 6); // Limit to 6 results
+
+      setSearchResults(results);
+      setShowSearchResults(results.length > 0);
+    } else {
+      setSearchResults([]);
+      setShowSearchResults(false);
+    }
+  }, [searchQuery]);
+
   const goTo = async (path: string, itemId: string) => {
     if (isTransitioning) return;
     
     // Close search and logo if expanded and navigating to another page
     if (searchExpanded) {
       setSearchExpanded(false);
+      setShowSearchResults(false);
     }
     if (logoExpanded) {
       setLogoExpanded(false);
@@ -92,6 +284,12 @@ export default function DashboardLayout({ children }: Props) {
     if (!searchExpanded && logoExpanded) {
       setLogoExpanded(false);
     }
+    // Clear search when closing
+    if (searchExpanded) {
+      setSearchQuery('');
+      setSearchResults([]);
+      setShowSearchResults(false);
+    }
   };
 
   const toggleLogo = () => {
@@ -99,21 +297,48 @@ export default function DashboardLayout({ children }: Props) {
     // Close search if logo is opened
     if (!logoExpanded && searchExpanded) {
       setSearchExpanded(false);
+      setShowSearchResults(false);
     }
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      // Handle search logic here
-      console.log('Searching for:', searchQuery);
-      // You can add your search logic here
+    if (searchQuery.trim() && searchResults.length > 0) {
+      // Navigate to the first/best match
+      const bestMatch = searchResults[0];
+      const sectionId = bestMatch.section.toLowerCase() === 'home' ? 'overview' : bestMatch.section.toLowerCase();
+      goTo(bestMatch.path, sectionId);
+      closeSearch();
     }
+  };
+
+  const handleSearchResultClick = (result: SearchResult) => {
+    const sectionId = result.section.toLowerCase() === 'home' ? 'overview' : result.section.toLowerCase();
+    goTo(result.path, sectionId);
+    closeSearch();
   };
 
   const closeSearch = () => {
     setSearchExpanded(false);
     setSearchQuery('');
+    setSearchResults([]);
+    setShowSearchResults(false);
+  };
+
+  // Function to highlight matching text in search results
+  const highlightMatch = (text: string, query: string) => {
+    if (!query.trim()) return text;
+    
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    
+    return parts.map((part, index) => 
+      regex.test(part) ? (
+        <span key={index} className="bg-purple-400/30 text-purple-200 font-semibold">
+          {part}
+        </span>
+      ) : part
+    );
   };
 
   const navItems = [
@@ -203,7 +428,7 @@ export default function DashboardLayout({ children }: Props) {
           </div>
 
           {/* Main Navigation - Responsive container */}
-          <div className={`bg-black/40 backdrop-blur-lg rounded-full ${isMobile ? 'px-3 py-2' : 'px-6 py-2'} shadow-2xl flex-1 transition-all duration-500 ease-out`}>
+          <div className={`bg-black/40 backdrop-blur-lg rounded-full ${isMobile ? 'px-3 py-2' : 'px-6 py-2'} shadow-2xl flex-1 transition-all duration-500 ease-out relative`}>
             <div className="flex items-center justify-center relative">
               
               {/* Logo details overlay - appears when logo is expanded */}
@@ -281,7 +506,7 @@ export default function DashboardLayout({ children }: Props) {
                   <Search size={isMobile ? 18 : 20} className="text-white" />
                   <input
                     type="text"
-                    placeholder="Search anything..."
+                    placeholder="Search across all sections..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="bg-transparent text-white placeholder-gray-300 outline-none flex-1 text-sm"
@@ -394,7 +619,58 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </nav>
 
-
+      {/* Search Results Overlay */}
+      {searchExpanded && showSearchResults && (
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-2xl px-4">
+          <div className="bg-black/90 backdrop-blur-xl border border-purple-500/30 rounded-2xl shadow-2xl shadow-purple-500/20 max-h-96 overflow-y-auto">
+            <div className="p-4">
+              <div className="text-sm text-gray-300 mb-3 px-2">
+                Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for {searchQuery}
+              </div>
+              
+              <div className="space-y-2">
+                {searchResults.map((result) => (
+                  <button
+                    key={result.id}
+                    onClick={() => handleSearchResultClick(result)}
+                    className="w-full text-left p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group border border-transparent hover:border-purple-400/30"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="text-xs px-2 py-1 bg-purple-600/30 text-purple-200 rounded-full font-medium">
+                            {result.section}
+                          </span>
+                        </div>
+                        <h4 className="text-white font-medium text-sm mb-1 group-hover:text-purple-200 transition-colors">
+                          {highlightMatch(result.title, searchQuery)}
+                        </h4>
+                        <p className="text-gray-400 text-xs line-clamp-2">
+                          {highlightMatch(result.description, searchQuery)}
+                        </p>
+                      </div>
+                      
+                      <div className="flex-shrink-0 ml-3">
+                        <div className="w-6 h-6 bg-purple-600/20 rounded-full flex items-center justify-center group-hover:bg-purple-600/40 transition-colors">
+                          <span className="text-purple-300 text-xs">→</span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              
+              {searchResults.length > 0 && (
+                <div className="mt-4 pt-3 border-t border-white/10">
+                  <p className="text-xs text-gray-400 text-center">
+                    Press Enter to go to the first result or click any result above
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Logo Details Overlay for Mobile */}
       {logoExpanded && isMobile && (
